@@ -2,14 +2,12 @@
 package com.incwo.facilescan.activity.scan;
 
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -22,19 +20,17 @@ import com.incwo.facilescan.activity.application.BaseTabActivity;
 import com.incwo.facilescan.managers.SingleApp;
 import com.incwo.facilescan.managers.WebService;
 import com.incwo.facilescan.scan.BusinessFile;
-import com.incwo.facilescan.scan.BusinessFilesList;
+import com.incwo.facilescan.scan.BusinessFilesFetch;
 
 import java.util.ArrayList;
 
 public class ScanFragment extends BaseListFragment {
 
-    static private int formIndexView = 0;
-    static private int ConnectedIndexView = 1;
+    static final private int SIGN_IN_FLIPPER_INDEX = 0;
+    static final private int LOADING_FLIPPER_INDEX = 1;
+    static final private int BUSINESS_FILES_FLIPPER_INDEX = 2;
 
-    private AsyncTask<?, ?, ?> mAsyncScanLoggingIn = null;
-
-    private BusinessFilesList xml;
-    private WebService ws;
+    private BusinessFilesFetch mBusinessFilesFetch = null;
 
     private View mRoot;
     private ViewFlipper viewFlipper;
@@ -44,7 +40,7 @@ public class ScanFragment extends BaseListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.scan_fragment, null);
         viewFlipper = (ViewFlipper) mRoot.findViewById(R.id.viewFlipper);
-        viewFlipper.setDisplayedChild(formIndexView);
+        viewFlipper.setDisplayedChild(SIGN_IN_FLIPPER_INDEX);
 
         // connectionIndexView
         Button loginButton = (Button) mRoot.findViewById(R.id.signin_loginButton);
@@ -57,6 +53,7 @@ public class ScanFragment extends BaseListFragment {
             }
         });
 
+        updateListAdapter(SingleApp.getBusinessFilesList().businessFiles);
         checkLogin();
 
         return mRoot;
@@ -64,11 +61,12 @@ public class ScanFragment extends BaseListFragment {
 
     public void checkLogin() {
         if (SingleApp.isLoggedIn()) {
-            viewFlipper.setDisplayedChild(ConnectedIndexView);
-            if (firstLoad)
-                mAsyncScanLoggingIn = new AsyncScanLoggingIn(SingleApp.getUsername(), SingleApp.getPassword()).execute();
+            viewFlipper.setDisplayedChild(BUSINESS_FILES_FLIPPER_INDEX);
+            if (firstLoad) {
+                fetch();
+            }
         } else {
-            viewFlipper.setDisplayedChild(formIndexView);
+            viewFlipper.setDisplayedChild(SIGN_IN_FLIPPER_INDEX);
             EditText editText = (EditText) mRoot.findViewById(R.id.edit_mail);
             editText.setText("");
             editText = (EditText) mRoot.findViewById(R.id.edit_password);
@@ -78,39 +76,73 @@ public class ScanFragment extends BaseListFragment {
 
     }
 
+    private void fetch() {
+        mBusinessFilesFetch = new BusinessFilesFetch(SingleApp.getUsername(), SingleApp.getPassword());
+        viewFlipper.setDisplayedChild(LOADING_FLIPPER_INDEX);
+        mBusinessFilesFetch.fetch(new BusinessFilesFetch.Listener() {
+            @Override
+            public void onSuccess(ArrayList<BusinessFile> businessFiles) {
+                BaseTabActivity activity = getTabActivity();
+                if (activity == null) { // Method called while the fragment is not on screen anymore
+                    return;
+                }
+
+                SingleApp.getBusinessFilesList().businessFiles = businessFiles;
+                viewFlipper.setDisplayedChild(BUSINESS_FILES_FLIPPER_INDEX);
+                updateListAdapter(businessFiles);
+                SingleApp.setLoggedIn(true);
+                firstLoad = false;
+                activity.logIn();
+                //mRoot.findViewById(R.id.LOADING).setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailed(int responseCode) {
+                WebService.showError(responseCode);
+                firstLoad = true;
+
+                // On failures, the user is logged out !!!
+                SingleApp.setLoggedIn(false);
+                viewFlipper.setDisplayedChild(SIGN_IN_FLIPPER_INDEX);
+            }
+
+            @Override
+            public void always() {
+                mRoot.findViewById(R.id.signin_loginButton).setVisibility(View.VISIBLE);
+                mRoot.findViewById(R.id.signin_bottomProgressBar).setVisibility(View.GONE);
+                mBusinessFilesFetch =null;
+            }
+        });
+    }
+
+    private void updateListAdapter(ArrayList<BusinessFile> businessFiles) {
+        BusinessItemAdapter businessAdapter = new BusinessItemAdapter(getActivity(), businessFiles);
+        setListAdapter(businessAdapter);
+        businessAdapter.notifyDataSetChanged();
+        //((BaseAdapter) getListAdapter()).notifyDataSetChanged();
+        // Warning: the "Loading view" is below the list. It shows if the list is empty.
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        if (SingleApp.isLoggedIn()) {
-            xml = SingleApp.getBusinessFilesList();
-            if (xml.businessFiles != null) {
-                if (xml.businessFiles.size() > 0)
-                    mRoot.findViewById(R.id.LOADING).setVisibility(View.GONE);
-                BusinessItemAdapter scanAdapter = new BusinessItemAdapter(this.getActivity(), xml.businessFiles);
-                setListAdapter(scanAdapter);
-            }
-            viewFlipper.setDisplayedChild(ConnectedIndexView);
-            if (firstLoad)
-                mAsyncScanLoggingIn = new AsyncScanLoggingIn(SingleApp.getUsername(), SingleApp.getPassword()).execute();
-        } else {
-            viewFlipper.setDisplayedChild(formIndexView);
-            firstLoad = true;
-        }
+
+        //checkLogin();
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        if (mAsyncScanLoggingIn != null) {
-            mAsyncScanLoggingIn.cancel(true);
+        if(mBusinessFilesFetch != null) {
+            mBusinessFilesFetch.cancel();
         }
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        SingleApp.setSelectedBusinessScanItem(xml.businessFiles.get(position));
+        SingleApp.setSelectedBusinessScanItem(SingleApp.getBusinessFilesList().businessFiles.get(position));
         getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, new ObjectScanFragment());
     }
 
@@ -153,61 +185,7 @@ public class ScanFragment extends BaseListFragment {
             editText = (EditText) mRoot.findViewById(R.id.edit_password);
             String password = editText.getText().toString();
 
-            mAsyncScanLoggingIn = new AsyncScanLoggingIn(username, password).execute();
+            checkLogin();
         }
     };
-
-    private class AsyncScanLoggingIn extends AsyncTask<String, Integer, Long> {
-        String login;
-        String password;
-
-        public AsyncScanLoggingIn(String username, String pass) {
-            login = username;
-            password = pass;
-        }
-
-        protected void onPreExecute() {
-        }
-
-        protected Long doInBackground(String... tasks) {
-            long result = 0;
-            ws = new WebService();
-            ws.logToScan(login, password);
-            result = ws.responseCode;
-            if (ws.responseCode >= 200 && ws.responseCode < 300) {
-                SingleApp.getBusinessFilesList().processXmLContent(ws.body);
-            }
-            return result;
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-        }
-
-        protected void onPostExecute(Long result) {
-            BaseTabActivity activity = getTabActivity();
-            if(activity == null) { // Method called while the fragment is not on screen anymore
-                return;
-            }
-
-            if (result >= 200 && result < 300) {
-                xml = SingleApp.getBusinessFilesList();
-                viewFlipper.setDisplayedChild(ConnectedIndexView);
-                BusinessItemAdapter businessAdapter = new BusinessItemAdapter(getActivity(), xml.businessFiles);
-                setListAdapter(businessAdapter);
-                ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
-                SingleApp.setLoggedIn(true);
-                firstLoad = false;
-                activity.logIn();
-                mRoot.findViewById(R.id.LOADING).setVisibility(View.GONE);
-
-            } else {
-                WebService.showError(result);
-
-                SingleApp.setLoggedIn(false);
-            }
-            mRoot.findViewById(R.id.signin_loginButton).setVisibility(View.VISIBLE);
-            mRoot.findViewById(R.id.signin_bottomProgressBar).setVisibility(View.GONE);
-            mAsyncScanLoggingIn = null;
-        }
-    }
 }

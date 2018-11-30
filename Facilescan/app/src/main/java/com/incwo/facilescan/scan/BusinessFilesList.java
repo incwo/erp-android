@@ -8,14 +8,5 @@ public class BusinessFilesList {
     public BusinessFilesList() {
 		businessFiles = new ArrayList<BusinessFile>();
 	}
-
-	@SuppressWarnings("unchecked")
-	public void processXmLContent(String xml) {
-		XmlScanParser xmlScanParser = new XmlScanParser();
-		xmlScanParser.readFromXmlContent(xml);
-		if (xmlScanParser.xml != null) {
-			businessFiles = (ArrayList<BusinessFile>) xmlScanParser.xml.businessFiles.clone();
-		}
-	}
 }
 

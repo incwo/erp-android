@@ -11,58 +11,45 @@
         android:layout_height="fill_parent"
         android:layout_gravity="center|center_horizontal">
 
-
-        <!-- Screen with email and password buttons -->
         <include layout="@layout/signin_layout" />
 
-
-        <!-- Screen display when you are connected -->
-
         <LinearLayout
+            android:id="@+id/LOADING"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
+            android:layout_weight="0"
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/LIST"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/loadingTextView"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:text="@string/Loading" />
 
-                <ListView
-                    android:id="@+id/android:list"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@android:color/white"
-                    android:headerDividersEnabled="false"/>
+            <ProgressBar
+                android:id="@+id/gettingScanProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
 
-            </LinearLayout>
+        </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/LOADING"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                android:gravity="center_vertical"
-                android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/LIST"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/loadingTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="16dp"
-                    android:text="@string/Loading" />
-
-                <ProgressBar
-                    android:id="@+id/gettingScanProgressBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center" />
-
-            </LinearLayout>
+            <ListView
+                android:id="@+id/android:list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@android:color/white"
+                android:headerDividersEnabled="false"/>
 
         </LinearLayout>
 
