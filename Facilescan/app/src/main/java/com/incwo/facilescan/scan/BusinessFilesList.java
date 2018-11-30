@@ -2,10 +2,10 @@ package com.incwo.facilescan.scan;
 
 import java.util.ArrayList;
 
-public class ScanXml  {
+public class BusinessFilesList {
 	public ArrayList<BusinessFile> businessFiles;
 
-    public ScanXml() {
+    public BusinessFilesList() {
 		businessFiles = new ArrayList<BusinessFile>();
 	}
 

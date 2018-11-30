@@ -15,7 +15,7 @@ import com.incwo.facilescan.helpers.fragments.TabFragment;
 import com.incwo.facilescan.managers.SingleApp;
 import com.incwo.facilescan.scan.BusinessFile;
 import com.incwo.facilescan.scan.ScanCategory;
-import com.incwo.facilescan.scan.ScanXml;
+import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.util.Calendar;
 
@@ -25,7 +25,7 @@ public class SignatureCanvasFragment extends TabFragment {
 	 private View mRoot;
 	 private DrawView drawView;
 	 private ScanCategory selectedItem;
-	 private ScanXml xml = null;
+	 private BusinessFilesList xml = null;
 	 private View screenshot = null;
 	
 	
@@ -48,7 +48,7 @@ public class SignatureCanvasFragment extends TabFragment {
     	TextView your_signature = (TextView) mRoot.findViewById(R.id.your_signature);
     	your_signature.setText(R.string.your_signature);
     	
-    	xml = SingleApp.getScanXml();
+    	xml = SingleApp.getBusinessFilesList();
     	BusinessFile businessFile = SingleApp.getSelectedBusinessScanItem();
     	selectedItem = businessFile.getObjectByName(SingleApp.getSelectedObjectScanItem());
     	

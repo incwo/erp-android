@@ -15,20 +15,20 @@ import com.incwo.facilescan.activity.application.BaseTabActivity;
 import com.incwo.facilescan.managers.SingleApp;
 import com.incwo.facilescan.scan.BusinessFile;
 import com.incwo.facilescan.scan.ScanCategory;
-import com.incwo.facilescan.scan.ScanXml;
+import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.util.ArrayList;
 
 public class ObjectScanFragment extends BaseListFragment {
 
-	private ScanXml xml = null;
+	private BusinessFilesList xml = null;
 	private BusinessFile selectedItem;
 	private View mRoot;
 	
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-    	xml = SingleApp.getScanXml();
+    	xml = SingleApp.getBusinessFilesList();
     	selectedItem = SingleApp.getSelectedBusinessScanItem();
     	
         ObjectScanAdapter objectScanAdapter = new ObjectScanAdapter(this.getActivity(), selectedItem.objectsName);

@@ -22,7 +22,7 @@ import com.incwo.facilescan.activity.application.BaseTabActivity;
 import com.incwo.facilescan.managers.SingleApp;
 import com.incwo.facilescan.managers.WebService;
 import com.incwo.facilescan.scan.BusinessFile;
-import com.incwo.facilescan.scan.ScanXml;
+import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.util.ArrayList;
 
@@ -33,7 +33,7 @@ public class ScanFragment extends BaseListFragment {
 
     private AsyncTask<?, ?, ?> mAsyncScanLoggingIn = null;
 
-    private ScanXml xml;
+    private BusinessFilesList xml;
     private WebService ws;
 
     private View mRoot;
@@ -82,7 +82,7 @@ public class ScanFragment extends BaseListFragment {
     public void onResume() {
         super.onResume();
         if (SingleApp.isLoggedIn()) {
-            xml = SingleApp.getScanXml();
+            xml = SingleApp.getBusinessFilesList();
             if (xml.businessFiles != null) {
                 if (xml.businessFiles.size() > 0)
                     mRoot.findViewById(R.id.LOADING).setVisibility(View.GONE);
@@ -175,7 +175,7 @@ public class ScanFragment extends BaseListFragment {
             ws.logToScan(login, password);
             result = ws.responseCode;
             if (ws.responseCode >= 200 && ws.responseCode < 300) {
-                SingleApp.getScanXml().processXmLContent(ws.body);
+                SingleApp.getBusinessFilesList().processXmLContent(ws.body);
             }
             return result;
         }
@@ -190,7 +190,7 @@ public class ScanFragment extends BaseListFragment {
             }
 
             if (result >= 200 && result < 300) {
-                xml = SingleApp.getScanXml();
+                xml = SingleApp.getBusinessFilesList();
                 viewFlipper.setDisplayedChild(ConnectedIndexView);
                 BusinessItemAdapter businessAdapter = new BusinessItemAdapter(getActivity(), xml.businessFiles);
                 setListAdapter(businessAdapter);

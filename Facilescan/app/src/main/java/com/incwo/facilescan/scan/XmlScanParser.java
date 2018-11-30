@@ -22,7 +22,7 @@ public class XmlScanParser extends DefaultHandler {
 		sb = new StringBuilder();
 	}
 
-	public ScanXml readFromXmlContent(String xmlContent) {
+	public BusinessFilesList readFromXmlContent(String xmlContent) {
 		try {
 			InputStream inputStream = new ByteArrayInputStream(xmlContent.getBytes());
 			processSaxStream(inputStream);
@@ -35,7 +35,7 @@ public class XmlScanParser extends DefaultHandler {
 		}
 	}
 
-	public ScanXml readFromFile(String rssPath) {
+	public BusinessFilesList readFromFile(String rssPath) {
 		try {
 			FileInputStream fileInputStream = new FileInputStream(rssPath);
 			processSaxStream(fileInputStream);
@@ -48,7 +48,7 @@ public class XmlScanParser extends DefaultHandler {
 		}
 	}
 
-	public ScanXml readFromUrl(String rssUrlPath) {
+	public BusinessFilesList readFromUrl(String rssUrlPath) {
 		try {
 			URL url = new URL(rssUrlPath);
 			InputStream inputStream = url.openStream();
@@ -70,7 +70,7 @@ public class XmlScanParser extends DefaultHandler {
 	static private final int inFieldItem = 3;
 	private int inItem = XmlScanParser.notInItem;
 
-	public ScanXml xml;
+	public BusinessFilesList xml;
 	private BusinessFile businessItem;
 	private ScanCategory objectItem;
 	private ScanField fieldItem;
@@ -179,7 +179,7 @@ public class XmlScanParser extends DefaultHandler {
 
 	public void processSaxStream(InputStream stream) {
 		try {
-				xml = new ScanXml();
+				xml = new BusinessFilesList();
 	
 				SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
 				saxParserFactory.setValidating(false); 

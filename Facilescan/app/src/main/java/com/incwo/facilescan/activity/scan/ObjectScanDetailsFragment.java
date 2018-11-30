@@ -30,7 +30,7 @@ import com.incwo.facilescan.managers.WebService;
 import com.incwo.facilescan.scan.BusinessFile;
 import com.incwo.facilescan.scan.ScanField;
 import com.incwo.facilescan.scan.ScanCategory;
-import com.incwo.facilescan.scan.ScanXml;
+import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.io.File;
 import java.io.InputStream;
@@ -44,7 +44,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
     private static final String FILE_PROVIDER_AUTHORITY = "com.incwo.facilescan.fileprovider";
 
     private View mRoot;
-    private ScanXml xml = null;
+    private BusinessFilesList xml = null;
     private ScanCategory mSelectedItem;
     private ScanField lastClickedField = null;
     private AsyncTask<?, ?, ?> SendTask = null;
@@ -61,7 +61,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        xml = SingleApp.getScanXml();
+        xml = SingleApp.getBusinessFilesList();
         BusinessFile selectedBusiness = SingleApp.getSelectedBusinessScanItem();
         mSelectedItem = selectedBusiness.getObjectByName(SingleApp.getSelectedObjectScanItem());
 

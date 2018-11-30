@@ -16,7 +16,7 @@ import com.incwo.facilescan.helpers.rss.Rss;
 import com.incwo.facilescan.helpers.rss.RssItem;
 import com.incwo.facilescan.helpers.videos.VideoXml;
 import com.incwo.facilescan.scan.BusinessFile;
-import com.incwo.facilescan.scan.ScanXml;
+import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class SingleApp
 	private static FacileScanPreference pref = null;
 	private static Rss news_rss = new Rss();
 	private static VideoXml videos_xml = new VideoXml();
-	private static ScanXml scan_xml = new ScanXml();
+	private static BusinessFilesList scan_xml = new BusinessFilesList();
 	private static HashMap<String, Bitmap> images = new HashMap<String, Bitmap>();
 	private static ArrayList<String> readNews = new ArrayList<String>();
 
@@ -342,13 +342,13 @@ public class SingleApp
 			scan_xml.processXmLContent(getFacileScanPreference().scans_xml);
 	}
 	
-	public static ScanXml getScanXml() {
+	public static BusinessFilesList getBusinessFilesList() {
 		return scan_xml;
 	}
 	
-	public static ScanXml setScansXml(String xml) {
+	public static BusinessFilesList setScansXml(String xml) {
 		if (scan_xml == null)
-			scan_xml = new ScanXml();
+			scan_xml = new BusinessFilesList();
 
 		if (xml == null || xml.equals("")) {
 			return null;
