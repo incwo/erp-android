@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- General -->
+    <string name="mail">e-mail</string>
+    <string name="password">mot de passe</string>
+
+    <!-- Tabs -->
+    <string name="desktop_tab_title">Bureau</string>
+    <string name="scan_tab_title">Scan</string>
+    <string name="videos_tab_title">Vidéos</string>
+    <string name="news_tab_title">Actualités</string>
+    
+    
+    <string name="Connect_to_facile">Connexion à incwo.com</string>
+    <string name="Connect">Connexion</string>
+    <string name="NoAccountYet">Pas encore de compte ?</string>
+    <string name="create_account">Créer un compte</string>
+    
+    <string name="Loading">Chargement</string>
+    <string name="All_videos">Toutes les vidéos</string>
+
+    <string name="submit">Envoyer</string>
+    
+    <string name="your_signature">Votre signature</string>
+    <string name="to_sign">Signer</string>
+    <string name="signed">Signé</string>
+    
+     <string name="to_clear">Effacer</string>
+     <string name="save">Enregistrer</string>
+     
+      <string name="video_search_bar_hint">Rechercher les vidéos</string>
+     
+    <!-- Errors -->
+    <string name="connexion_error">La connexion Internet semble interrompue.</string>
+    <string name="bad_identifiers">Mauvais identifiants.</string>
+    <string name="signin.emailPlaceholder">E-mail</string>
+    <string name="signin.passwordPlaceholder">Mot de passe</string>
+    <string name="signin.loginButton">Connexion</string>
+    <string name="nav_stop_description">Interrompre le chargement</string>
+    <string name="nav_reload_description">Recharger la page</string>
+    <string name="nav_back_description">Page précédente</string>
+    <string name="nav_forward_description">Page suivante</string>
+    <string name="nav_sign_out_description">Se déconnecter</string>
+    <string name="take_photo_description">Prendre une photo</string>
+    <string name="photo_source_prompt">Source de la photo:</string>
+
+</resources>

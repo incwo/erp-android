@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#1D3144</color>
+    <color name="primaryDark">#0C1F30</color>
+    <color name="accent">#10A0E3</color>
+    <color name="secondary">#B3B3B3</color>
+
+    <color name="bottomNavigationOn">#FFFFFFFF</color>
+    <color name="bottomNavigationOff">#88FFFFFF</color>
+    <color name="bottomNavigationBackground">@color/primary</color>
+
+    <color name="badgeBackground">#E3191A</color>
+    <color name="badgeText">#FFFFFF</color>
+
+    <color name="videosCategoryCountBackground">@color/secondary</color>
+    <color name="videosCategoryCountText">#FFFFFF</color>
+
+    <color name="newsDate">#888888</color>
+</resources>

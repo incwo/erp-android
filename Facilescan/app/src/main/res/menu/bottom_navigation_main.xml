@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_desktop"
+        android:checkable="false"
+        android:enabled="true"
+        android:icon="@drawable/desktop_tab"
+        android:title="@string/desktop_tab_title"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_scan"
+        android:checkable="false"
+        android:enabled="true"
+        android:icon="@drawable/scan_tab"
+        android:title="@string/scan_tab_title"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_videos"
+        android:checkable="false"
+        android:enabled="true"
+        android:icon="@drawable/videos_tab"
+        android:title="@string/videos_tab_title"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_news"
+        android:checkable="false"
+        android:enabled="true"
+        android:icon="@drawable/news_tab"
+        android:title="@string/news_tab_title"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<LinearLayout
+		android:id="@+id/field_scan_unit_holder"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingLeft="10dip"
+		android:paddingRight="10dip">
+
+		<!-- almost everyting is generated programmaticaly with "field_scan_edit_text" and "field_scan_values_displayer" -->
+
+		<!-- photo  -->
+		<LinearLayout
+			android:id="@+id/photo_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="14dp"
+			android:layout_marginBottom="8dip"
+			android:background="@drawable/layout_blue_round_background_selector"
+			android:orientation="vertical">
+
+			<LinearLayout
+				android:id="@+id/photo_button"
+				android:layout_width="fill_parent"
+				android:layout_height="320dp"
+				android:duplicateParentState="true"
+				android:orientation="horizontal"
+				android:padding="8dip">
+
+				<ImageView
+					android:id="@+id/photo_imageView"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:contentDescription="@string/take_photo_description"
+					android:duplicateParentState="true"
+					android:gravity="center_horizontal"
+					android:paddingLeft="10dp"
+					android:paddingRight="10dp"
+					android:scaleType="centerInside"
+					android:src="@drawable/photo_placeholder" />
+
+			</LinearLayout>
+		</LinearLayout>
+
+
+		<!-- submit button -->
+		<LinearLayout
+			android:id="@+id/submit_button"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="14dp"
+			android:layout_marginBottom="8dip"
+			android:background="@drawable/layout_blue_round_background_selector"
+			android:orientation="vertical">
+
+			<LinearLayout
+				android:id="@+id/submit"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:duplicateParentState="true"
+				android:orientation="horizontal"
+				android:padding="8dip">
+
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:duplicateParentState="true"
+					android:gravity="center_horizontal"
+					android:paddingLeft="10dp"
+					android:paddingRight="10dp"
+					android:text="@string/submit"
+					android:textColor="@android:color/black"
+					android:textSize="17sp"
+					android:textStyle="normal" />
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/LOADING_BOTTOM"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:duplicateParentState="true"
+				android:orientation="horizontal"
+				android:padding="8dp"
+				android:visibility="gone">
+
+				<ProgressBar
+					android:id="@+id/progressBar1"
+					android:layout_width="fill_parent"
+					android:layout_height="23dp"
+					android:gravity="center_horizontal" />
+			</LinearLayout>
+		</LinearLayout>
+
+	</LinearLayout>
+
+</ScrollView>

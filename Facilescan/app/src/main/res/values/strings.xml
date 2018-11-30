@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" translatable="false">incwo ERP</string>
+    <string name="menu_settings" translatable="false">Settings</string>
+
+    <!-- General -->
+    <string name="mail">e-mail</string>
+    <string name="password">password</string>
+    
+    <!-- Tabs -->
+    <string name="desktop_tab_title">Desktop</string>
+    <string name="nav_stop_description">Stop loading</string>
+    <string name="nav_reload_description">Reload page</string>
+    <string name="nav_back_description">Previous page</string>
+    <string name="nav_forward_description">Next page</string>
+    <string name="nav_sign_out_description">Sign out</string>
+
+
+    <string name="scan_tab_title">Scan</string>
+    <string name="videos_tab_title">Videos</string>
+    <string name="news_tab_title">News</string>
+    
+    <string name="Connect_to_facile">Log in to incwo.com</string>
+    <string name="Connect">Login</string>
+    <string name="NoAccountYet">No account yet?</string>
+    <string name="create_account">Create an account</string>
+
+    <string name="signin.emailPlaceholder">E-mail</string>
+    <string name="signin.passwordPlaceholder">Password</string>
+
+    <string name="Loading">Loading</string>
+    <string name="All_videos">All Videos</string>
+    
+     <string name="submit">Submit</string>
+     
+     <string name="your_signature">Your signature</string>
+     <string name="to_sign">Sign</string>
+     <string name="signed">Signed</string>
+    <string name="take_photo_description">Take a Photo</string>
+    <string name="photo_source_prompt">Get a Photo from:</string>
+     
+     <string name="to_clear">Clear</string>
+     <string name="save">Save</string>
+    
+     <string name="video_search_bar_hint">Search Videos</string>
+     
+    <!-- Errors -->
+    <string name="connexion_error">The Internet connection appears to be offline.</string>
+    <string name="bad_identifiers">Wrong identifiers.</string>
+    <string name="signin.loginButton">Log in</string>
+
+</resources>

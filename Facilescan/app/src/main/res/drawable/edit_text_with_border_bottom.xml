@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_window_focused="false" android:state_enabled="true"
+        android:drawable="@drawable/textfield_default" />
+    <item android:state_window_focused="false" android:state_enabled="false"
+        android:drawable="@drawable/textfield_disabled" />
+    <item android:state_pressed="true" android:drawable="@drawable/textfield_pressed" />
+    <item android:state_enabled="true" android:state_focused="true" android:drawable="@drawable/textfield_selected" />
+    <item android:state_enabled="true" android:drawable="@drawable/textfield_default" />
+    <item android:state_focused="true" android:drawable="@drawable/textfield_disabled_selected" />
+    <item android:drawable="@drawable/textfield_disabled" />
+</selector>
+-->
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_focused="true" >
+		 <shape>
+			<padding android:left="8dip" android:top="4dip" android:right="8dip" android:bottom="4dip"/>
+
+			<solid android:color="#D1F1FA" />
+		
+		    <stroke
+		        android:width="1dip"
+		        android:color="@android:color/darker_gray" />
+		
+		   <corners android:bottomRightRadius="8dp" android:bottomLeftRadius="8dp" 
+     android:topLeftRadius="0dp" android:topRightRadius="0dp" />
+		</shape>
+    </item>
+    
+    
+      <item android:state_selected="true" >
+		 <shape>
+			<padding android:left="8dip" android:top="4dip" android:right="8dip" android:bottom="4dip"/>
+
+			<solid android:color="#D1F1FA" />
+		
+		    <stroke
+		        android:width="1dip"
+		        android:color="@android:color/darker_gray" />
+		
+		   <corners android:bottomRightRadius="8dp" android:bottomLeftRadius="8dp" 
+     android:topLeftRadius="0dp" android:topRightRadius="0dp" />
+		</shape>
+    </item>
+        
+        
+    <item>        
+        <shape>
+			<padding android:left="8dip" android:top="8dip" android:right="8dip" android:bottom="8dip"/>
+
+			<solid android:color="@android:color/white" />
+		
+			<stroke
+		        android:width="1dip"
+		        android:color="@android:color/darker_gray" />
+			
+		     <corners android:bottomRightRadius="8dp" android:bottomLeftRadius="8dp" 
+     android:topLeftRadius="0dp" android:topRightRadius="0dp" />
+        </shape>
+    </item>
+</selector>
