@@ -143,22 +143,6 @@ public class FacileScanPreference {
 		}
 	}
 	
-	public void loadScans(){
-		synchronized (lock) {
-			SharedPreferences sharedPreferences = getSharedPreferences();
-			scans_xml = sharedPreferences.getString("scans_xml", "");
-		}
-	}
-	
-	public void saveScans() {
-		synchronized (lock) {
-			SharedPreferences sharedPreferences = getSharedPreferences();
-			SharedPreferences.Editor editor = sharedPreferences.edit();
-			editor.putString("scans_xml", scans_xml);
-			editor.commit();
-		}
-	}
-	
 	public void loadSession(){
 		synchronized (lock) {
 			SharedPreferences sharedPreferences = getSharedPreferences();

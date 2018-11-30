@@ -43,7 +43,7 @@ public class SingleApp
 	private static FacileScanPreference pref = null;
 	private static Rss news_rss = new Rss();
 	private static VideoXml videos_xml = new VideoXml();
-	private static BusinessFilesList scan_xml = new BusinessFilesList();
+	private static BusinessFilesList sBusinessFilesList = new BusinessFilesList();
 	private static HashMap<String, Bitmap> images = new HashMap<String, Bitmap>();
 	private static ArrayList<String> readNews = new ArrayList<String>();
 
@@ -296,7 +296,6 @@ public class SingleApp
 	
 	public static void loadAll(){
 		loadSessionId();
-		loadScanXml();
 		loadNewsRss();
 		loadVideosXml();
 		loadUsernameAndPassword();
@@ -335,29 +334,11 @@ public class SingleApp
 		int read = getReadNews().size();
 		return all - read;
 	}
-	
-	public static void loadScanXml(){
-		getFacileScanPreference().loadScans();
-		if (getFacileScanPreference().scans_xml.equals("") == false)
-			scan_xml.processXmLContent(getFacileScanPreference().scans_xml);
-	}
-	
-	public static BusinessFilesList getBusinessFilesList() {
-		return scan_xml;
-	}
-	
-	public static BusinessFilesList setScansXml(String xml) {
-		if (scan_xml == null)
-			scan_xml = new BusinessFilesList();
 
-		if (xml == null || xml.equals("")) {
-			return null;
-		}
-		getFacileScanPreference().scans_xml = xml;
-		getFacileScanPreference().saveScans();
-		scan_xml.processXmLContent(xml);
-		return scan_xml;
+	public static BusinessFilesList getBusinessFilesList() {
+		return sBusinessFilesList;
 	}
+
 	
 	public static void loadVideosXml(){
 		getFacileScanPreference().loadVideos();
