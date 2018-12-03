@@ -20,6 +20,7 @@
     <string name="scan_tab_title">Scan</string>
     <string name="videos_tab_title">Videos</string>
     <string name="news_tab_title">News</string>
+    <string name="menu_refresh">Refresh</string>
     
     <string name="Connect_to_facile">Log in to incwo.com</string>
     <string name="Connect">Login</string>

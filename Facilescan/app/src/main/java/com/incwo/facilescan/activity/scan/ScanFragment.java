@@ -3,7 +3,12 @@ package com.incwo.facilescan.activity.scan;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,10 +36,17 @@ public class ScanFragment extends BaseListFragment {
     static final private int BUSINESS_FILES_FLIPPER_INDEX = 2;
 
     private BusinessFilesFetch mBusinessFilesFetch = null;
+    private boolean firstLoad = true;
 
     private View mRoot;
     private ViewFlipper viewFlipper;
-    private boolean firstLoad = true;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +65,16 @@ public class ScanFragment extends BaseListFragment {
             }
         });
 
+        mSwipeRefreshLayout = mRoot.findViewById(R.id.swipeRefresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
+
+
+
         updateListAdapter(SingleApp.getBusinessFilesList().businessFiles);
         checkLogin();
 
@@ -62,6 +84,7 @@ public class ScanFragment extends BaseListFragment {
     public void checkLogin() {
         if (SingleApp.isLoggedIn()) {
             viewFlipper.setDisplayedChild(BUSINESS_FILES_FLIPPER_INDEX);
+            getActivity().invalidateOptionsMenu();
             if (firstLoad) {
                 fetch();
             }
@@ -70,7 +93,6 @@ public class ScanFragment extends BaseListFragment {
             clearSignInEditTexts();
             firstLoad = true;
         }
-
     }
 
     private void clearSignInEditTexts() {
@@ -97,7 +119,6 @@ public class ScanFragment extends BaseListFragment {
                 SingleApp.setLoggedIn(true);
                 firstLoad = false;
                 activity.logIn();
-                //mRoot.findViewById(R.id.LOADING).setVisibility(View.GONE);
             }
 
             @Override
@@ -107,16 +128,22 @@ public class ScanFragment extends BaseListFragment {
 
                 // On failures, the user is logged out !!!
                 SingleApp.setLoggedIn(false);
+                getActivity().invalidateOptionsMenu();
                 viewFlipper.setDisplayedChild(SIGN_IN_FLIPPER_INDEX);
             }
 
             @Override
             public void always() {
+                mSwipeRefreshLayout.setRefreshing(false);
                 mRoot.findViewById(R.id.signin_loginButton).setVisibility(View.VISIBLE);
                 mRoot.findViewById(R.id.signin_bottomProgressBar).setVisibility(View.GONE);
                 mBusinessFilesFetch =null;
             }
         });
+    }
+
+    private void refresh() {
+            fetch();
     }
 
     private void updateListAdapter(ArrayList<BusinessFile> businessFiles) {
@@ -171,6 +198,26 @@ public class ScanFragment extends BaseListFragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.scan_action_bar, menu);
+
+        MenuItem refreshItem = menu.findItem(R.id.action_refresh);
+        refreshItem.setEnabled(SingleApp.isLoggedIn());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                refresh();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     private View.OnClickListener mLogInButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
