@@ -84,7 +84,10 @@ public class ScanFragment extends BaseListFragment {
     public void checkLogin() {
         if (SingleApp.isLoggedIn()) {
             viewFlipper.setDisplayedChild(BUSINESS_FILES_FLIPPER_INDEX);
-            getActivity().invalidateOptionsMenu();
+            Activity activity = getActivity();
+            if(activity != null) {
+                activity.invalidateOptionsMenu();
+            }
             if (firstLoad) {
                 fetch();
             }
