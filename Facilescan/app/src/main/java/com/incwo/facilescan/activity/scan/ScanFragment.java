@@ -146,15 +146,13 @@ public class ScanFragment extends BaseListFragment {
     }
 
     private void refresh() {
-            fetch();
+        fetch();
     }
 
     private void updateListAdapter(ArrayList<BusinessFile> businessFiles) {
         BusinessItemAdapter businessAdapter = new BusinessItemAdapter(getActivity(), businessFiles);
         setListAdapter(businessAdapter);
         businessAdapter.notifyDataSetChanged();
-        //((BaseAdapter) getListAdapter()).notifyDataSetChanged();
-        // Warning: the "Loading view" is below the list. It shows if the list is empty.
     }
 
     @Override
