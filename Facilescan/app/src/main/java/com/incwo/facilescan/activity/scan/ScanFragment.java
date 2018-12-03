@@ -67,13 +67,17 @@ public class ScanFragment extends BaseListFragment {
             }
         } else {
             viewFlipper.setDisplayedChild(SIGN_IN_FLIPPER_INDEX);
-            EditText editText = (EditText) mRoot.findViewById(R.id.edit_mail);
-            editText.setText("");
-            editText = (EditText) mRoot.findViewById(R.id.edit_password);
-            editText.setText("");
+            clearSignInEditTexts();
             firstLoad = true;
         }
 
+    }
+
+    private void clearSignInEditTexts() {
+        EditText emailEditText = (EditText) mRoot.findViewById(R.id.edit_mail);
+        emailEditText.setText("");
+        EditText passwordEditText = (EditText) mRoot.findViewById(R.id.edit_password);
+        passwordEditText.setText("");
     }
 
     private void fetch() {
@@ -121,13 +125,6 @@ public class ScanFragment extends BaseListFragment {
         businessAdapter.notifyDataSetChanged();
         //((BaseAdapter) getListAdapter()).notifyDataSetChanged();
         // Warning: the "Loading view" is below the list. It shows if the list is empty.
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        //checkLogin();
     }
 
     @Override
@@ -180,11 +177,14 @@ public class ScanFragment extends BaseListFragment {
             mRoot.findViewById(R.id.signin_loginButton).setVisibility(View.GONE);
             mRoot.findViewById(R.id.signin_bottomProgressBar).setVisibility(View.VISIBLE);
 
-            EditText editText = (EditText) mRoot.findViewById(R.id.edit_mail);
-            String username = editText.getText().toString();
-            editText = (EditText) mRoot.findViewById(R.id.edit_password);
-            String password = editText.getText().toString();
+            EditText usernameEditText = (EditText) mRoot.findViewById(R.id.edit_mail);
+            String username = usernameEditText.getText().toString();
+            EditText passwordEditText = (EditText) mRoot.findViewById(R.id.edit_password);
+            String password = passwordEditText.getText().toString();
 
+            SingleApp.saveUsernameAndPassword(username, password);
+            SingleApp.setLoggedIn(true);
+            firstLoad = true;
             checkLogin();
         }
     };
