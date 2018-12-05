@@ -212,8 +212,11 @@ public class BaseTabActivity extends AppCompatActivity {
     public void logOut() {
         SingleApp.logOut();
         popToRoot(TAB_SCAN);
-        ScanFragment scanFragment = (ScanFragment) mNavigationStacks.get(TAB_SCAN).elementAt(0);
-        scanFragment.checkLogin();
+
+        if (!mNavigationStacks.get(TAB_SCAN).isEmpty()) {
+            ScanFragment scanFragment = (ScanFragment) mNavigationStacks.get(TAB_SCAN).elementAt(0);
+            scanFragment.checkLogin();
+        }
     }
 
     public void logIn() {
