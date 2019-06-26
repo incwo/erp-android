@@ -1,11 +1,11 @@
 package com.incwo.facilescan.activity.main;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.support.constraint.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.incwo.facilescan.R;
 import com.incwo.facilescan.activity.application.BaseTabActivity;

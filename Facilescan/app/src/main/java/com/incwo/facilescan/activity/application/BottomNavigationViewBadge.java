@@ -1,10 +1,10 @@
 package com.incwo.facilescan.activity.application;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.support.design.internal.BottomNavigationItemView;
-import android.support.design.internal.BottomNavigationMenuView;
-import android.support.design.widget.BottomNavigationView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
