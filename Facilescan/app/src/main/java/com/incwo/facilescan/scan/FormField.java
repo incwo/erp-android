@@ -5,7 +5,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ScanField {
+public class FormField {
 	public String name; // Localized, human-readable title of the field
 	public String key; // Key to send the field to the server
 	public String type; // Type of the field = string|signature|enum
@@ -22,7 +22,7 @@ public class ScanField {
 	public String savedValue; // To save the value while the fragment's views are destroyed.
 
 	
-	public ScanField() {
+	public FormField() {
 		  name = "";
 		  key = "";
 		  type = "";

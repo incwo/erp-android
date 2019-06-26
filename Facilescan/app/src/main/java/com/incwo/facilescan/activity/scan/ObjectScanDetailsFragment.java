@@ -28,8 +28,8 @@ import com.incwo.facilescan.activity.application.BaseTabActivity;
 import com.incwo.facilescan.managers.SingleApp;
 import com.incwo.facilescan.managers.WebService;
 import com.incwo.facilescan.scan.BusinessFile;
-import com.incwo.facilescan.scan.ScanField;
-import com.incwo.facilescan.scan.ScanCategory;
+import com.incwo.facilescan.scan.FormField;
+import com.incwo.facilescan.scan.Form;
 import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.io.File;
@@ -45,8 +45,8 @@ public class ObjectScanDetailsFragment extends TabFragment {
 
     private View mRoot;
     private BusinessFilesList xml = null;
-    private ScanCategory mSelectedItem;
-    private ScanField lastClickedField = null;
+    private Form mSelectedItem;
+    private FormField lastClickedField = null;
     private AsyncTask<?, ?, ?> SendTask = null;
     private boolean mIsPhotoTaken = false;
     private Bitmap mBitmap = null;
@@ -63,7 +63,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
 
         xml = SingleApp.getBusinessFilesList();
         BusinessFile selectedBusiness = SingleApp.getSelectedBusinessScanItem();
-        mSelectedItem = selectedBusiness.getObjectByName(SingleApp.getSelectedObjectScanItem());
+        mSelectedItem = selectedBusiness.getFormByName(SingleApp.getSelectedObjectScanItem());
 
         handleReturnOfPreviousFragment();
     }
@@ -81,7 +81,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
         super.onStop();
 
         // Save the contents of the text views into the fields
-        for(ScanField field: mSelectedItem.fields) {
+        for(FormField field: mSelectedItem.fields) {
             TextView valueHolder = field.valueHolder;
             if(valueHolder != null) { // e.g.: null for Signature fields
                 field.savedValue = field.valueHolder.getText().toString();
@@ -112,7 +112,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
 
     private void buildForm(LayoutInflater inflater, LinearLayout containerLayout) {
         int position = 0;
-        for (ScanField field : mSelectedItem.fields) {
+        for (FormField field : mSelectedItem.fields) {
             View view;
             if (field.type.equals("signature")) {
                view = createSignatureFieldView(inflater, containerLayout, field);
@@ -127,7 +127,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
         }
     }
 
-    private View createSignatureFieldView(LayoutInflater inflater, ViewGroup container, ScanField field) {
+    private View createSignatureFieldView(LayoutInflater inflater, ViewGroup container, FormField field) {
         View v = inflater.inflate(R.layout.signing_field_scan_values_displayer, container, false);
 
         TextView nameTextView = (TextView) v.findViewById(R.id.fieldName);
@@ -156,7 +156,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
         return v;
     }
 
-    private View createEnumFieldView(LayoutInflater inflater, ViewGroup container, ScanField field) {
+    private View createEnumFieldView(LayoutInflater inflater, ViewGroup container, FormField field) {
         View v = inflater.inflate(R.layout.field_scan_values_displayer, container, false);
 
         TextView nameTextView = (TextView) v.findViewById(R.id.fieldName);
@@ -172,7 +172,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
         return v;
     }
 
-    private View createStringFieldView(LayoutInflater inflater, ViewGroup container, ScanField field) {
+    private View createStringFieldView(LayoutInflater inflater, ViewGroup container, FormField field) {
         View v = inflater.inflate(R.layout.field_scan_edit_text, container, false);
 
         TextView nameTextView = (TextView) v.findViewById(R.id.fieldName);
@@ -318,8 +318,8 @@ public class ObjectScanDetailsFragment extends TabFragment {
     };
 
     @Nullable
-    private ScanField findFieldForValueHolder(View valueHolder) {
-        for(ScanField field: mSelectedItem.fields) {
+    private FormField findFieldForValueHolder(View valueHolder) {
+        for(FormField field: mSelectedItem.fields) {
             if(field.valueHolder.getId() == valueHolder.getId()) {
                 return field;
             }
@@ -366,9 +366,9 @@ public class ObjectScanDetailsFragment extends TabFragment {
 
             BusinessFile businessFile = SingleApp.getSelectedBusinessScanItem();
             if (mIsPhotoTaken)
-                ws.submitScanInformations(businessFile.id, mSelectedItem, mBitmap);
+                ws.uploadForm(businessFile.id, mSelectedItem, mBitmap);
             else
-                ws.submitScanInformations(businessFile.id, mSelectedItem, null);
+                ws.uploadForm(businessFile.id, mSelectedItem, null);
 
             return (long) ws.responseCode;
         }

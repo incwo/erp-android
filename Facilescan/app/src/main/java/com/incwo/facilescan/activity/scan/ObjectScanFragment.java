@@ -14,7 +14,7 @@ import com.incwo.facilescan.helpers.fragments.BaseListFragment;
 import com.incwo.facilescan.activity.application.BaseTabActivity;
 import com.incwo.facilescan.managers.SingleApp;
 import com.incwo.facilescan.scan.BusinessFile;
-import com.incwo.facilescan.scan.ScanCategory;
+import com.incwo.facilescan.scan.Form;
 import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class ObjectScanFragment extends BaseListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        ScanCategory item = selectedItem.objects.get(position);
+        Form item = selectedItem.getForms().get(position);
         SingleApp.setSelectedObjectScanItem(item.className);
         
         getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, new ObjectScanDetailsFragment());

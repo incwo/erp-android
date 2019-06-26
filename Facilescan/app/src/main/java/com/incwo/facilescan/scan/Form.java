@@ -2,20 +2,20 @@ package com.incwo.facilescan.scan;
 
 import java.util.ArrayList;
 
-public class ScanCategory {
+public class Form {
 	public String className;
 	public String type;
-	public ArrayList<ScanField> fields;
+	public ArrayList<FormField> fields;
 	
-	public ScanCategory() {
+	public Form() {
 	    className = "";
 	    type = "";
-		fields = new ArrayList<ScanField>();
+		fields = new ArrayList<FormField>();
 	}
 
-	public ScanField getFieldByName(String name)
+	public FormField getFieldByName(String name)
 	{
-		for (ScanField tmp : fields)
+		for (FormField tmp : fields)
 		{
 			if (name.equals(tmp.name))
 				return tmp;
@@ -26,7 +26,7 @@ public class ScanCategory {
 	public ArrayList<String> getAllFieldsValue()
 	{
 		ArrayList<String> values = new ArrayList<String>();
-		for (ScanField field : fields)
+		for (FormField field : fields)
 			values.add(field.valueHolder.getText().toString());
 		return values;
 	}
@@ -39,7 +39,7 @@ public class ScanCategory {
 		return type;
 	}
 	
-	public ArrayList<ScanField> getFields() {
+	public ArrayList<FormField> getFields() {
 		return fields;
 	}
 

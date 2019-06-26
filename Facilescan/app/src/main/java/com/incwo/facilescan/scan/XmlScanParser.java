@@ -72,8 +72,8 @@ public class XmlScanParser extends DefaultHandler {
 
 	public BusinessFilesList xml;
 	private BusinessFile businessItem;
-	private ScanCategory objectItem;
-	private ScanField fieldItem;
+	private Form objectItem;
+	private FormField fieldItem;
 
 	public void startElement(String uri, String name, String qName, Attributes atts) {
 		inName = name.trim();
@@ -87,11 +87,11 @@ public class XmlScanParser extends DefaultHandler {
 		} 
 		else if (inItem == inBusinessFileItem && inName.equals("object")) {
 			inItem = XmlScanParser.inObjectItem;
-			objectItem = new ScanCategory();
+			objectItem = new Form();
 		}
 		else if (inItem == inObjectItem && inName.equals("les_champs")) {
 			inItem = XmlScanParser.inFieldItem;
-			fieldItem = new ScanField();
+			fieldItem = new FormField();
 			
 		}
 		if (inName.equals("la_valeur"))
@@ -159,7 +159,7 @@ public class XmlScanParser extends DefaultHandler {
 			inItem = XmlScanParser.inBusinessFileItem;
 			if ((!objectItem.className.equals("")) && (!objectItem.type.equals("")))
 			{
-				businessItem.objects.add(objectItem);
+				businessItem.mForms.add(objectItem);
 				businessItem.objectsName.add(objectItem.className);
 			}
 		}

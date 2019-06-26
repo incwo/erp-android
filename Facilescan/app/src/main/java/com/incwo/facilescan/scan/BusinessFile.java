@@ -6,23 +6,23 @@ public class BusinessFile {
 	public String id;
 	public String name;
 	public String kind;
-	public ArrayList<ScanCategory> objects;
+	protected ArrayList<Form> mForms;
 	public ArrayList<String> objectsName;
 	
 	public BusinessFile() {
 		id = "";
 		name = "";
 		kind = "";
-		objects = new ArrayList<ScanCategory>();
+		mForms = new ArrayList<Form>();
 		objectsName = new ArrayList<String>();
 	}
 
-	public ScanCategory getObjectByName(String name)
+	public Form getFormByName(String name)
 	{
-		for (ScanCategory obj : objects)
+		for (Form form: mForms)
 		{
-			if (obj.className.equals(name))
-				return obj;
+			if (form.className.equals(name))
+				return form;
 		}
 		return null;
 	}
@@ -35,8 +35,8 @@ public class BusinessFile {
 		return name;
 	}
 
-	public ArrayList<ScanCategory> getCategories() {
-		return objects;
+	public ArrayList<Form> getForms() {
+		return mForms;
 	}
 	
 }

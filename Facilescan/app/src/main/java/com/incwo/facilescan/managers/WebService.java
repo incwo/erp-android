@@ -10,8 +10,8 @@ import android.widget.Toast;
 import com.incwo.facilescan.BuildConfig;
 import com.incwo.facilescan.R;
 import com.incwo.facilescan.helpers.Base64;
-import com.incwo.facilescan.scan.ScanField;
-import com.incwo.facilescan.scan.ScanCategory;
+import com.incwo.facilescan.scan.FormField;
+import com.incwo.facilescan.scan.Form;
 import com.incwo.facilescan.toasts.ToastNoQueue;
 
 import java.io.BufferedReader;
@@ -29,8 +29,8 @@ import java.util.Random;
 
 public class WebService {
 
-    private final int connectTimeOut = 15 * 1000;
-    private final int readTimeOut = 60 * 1000;
+    private final int CONNECT_TIME_OUT = 15 * 1000;
+    private final int READ_TIME_OUT = 60 * 1000;
     public int responseCode;
     public Map<String, List<String>> headersFields;
     public String body;
@@ -72,8 +72,8 @@ public class WebService {
             httpURLConnection.setRequestMethod("GET");
             httpURLConnection.setDoOutput(false);
             httpURLConnection.setUseCaches(false);
-            httpURLConnection.setConnectTimeout(connectTimeOut);
-            httpURLConnection.setReadTimeout(readTimeOut);
+            httpURLConnection.setConnectTimeout(CONNECT_TIME_OUT);
+            httpURLConnection.setReadTimeout(READ_TIME_OUT);
 
             httpURLConnection.setRequestProperty("Accept-Language", "fr");
             httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
@@ -136,8 +136,8 @@ public class WebService {
                 tmpConnection = (HttpURLConnection) tmpURL.openConnection();
                 tmpConnection.setRequestMethod("POST");
                 tmpConnection.setDoOutput(true);
-                tmpConnection.setConnectTimeout(connectTimeOut);
-                tmpConnection.setReadTimeout(readTimeOut);
+                tmpConnection.setConnectTimeout(CONNECT_TIME_OUT);
+                tmpConnection.setReadTimeout(READ_TIME_OUT);
 
                 tmpConnection.setRequestProperty("Accept-Language", "fr");
                 tmpConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
@@ -165,8 +165,8 @@ public class WebService {
             tmpConnection = (HttpURLConnection) tmpURL.openConnection();
             tmpConnection.setRequestMethod("GET");
             tmpConnection.setDoOutput(false);
-            tmpConnection.setConnectTimeout(connectTimeOut);
-            tmpConnection.setReadTimeout(readTimeOut);
+            tmpConnection.setConnectTimeout(CONNECT_TIME_OUT);
+            tmpConnection.setReadTimeout(READ_TIME_OUT);
 
             tmpConnection.setRequestProperty("Accept-Language", "fr");
             tmpConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
@@ -236,8 +236,8 @@ public class WebService {
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setDoOutput(true);
-            httpURLConnection.setConnectTimeout(connectTimeOut);
-            httpURLConnection.setReadTimeout(readTimeOut);
+            httpURLConnection.setConnectTimeout(CONNECT_TIME_OUT);
+            httpURLConnection.setReadTimeout(READ_TIME_OUT);
 
             httpURLConnection.setRequestProperty("Accept-Language", "fr");
             httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
@@ -296,8 +296,8 @@ public class WebService {
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("GET");
             httpURLConnection.setDoOutput(false);
-            httpURLConnection.setConnectTimeout(connectTimeOut);
-            httpURLConnection.setReadTimeout(readTimeOut);
+            httpURLConnection.setConnectTimeout(CONNECT_TIME_OUT);
+            httpURLConnection.setReadTimeout(READ_TIME_OUT);
 
             httpURLConnection.setRequestProperty("Accept-Language", "fr");
             httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
@@ -348,8 +348,8 @@ public class WebService {
 
 
     // submit scan informations
-    public void submitScanInformations(String fileId, ScanCategory scanCategory, Bitmap image) {
-        String remoteUrl = SingleApp.getBaseURL() + "/" + fileId + SingleApp.UPLOAD_SCAN_URL;
+    public void uploadForm(String businessFileId, Form form, Bitmap image) {
+        String remoteUrl = SingleApp.getBaseURL() + "/" + businessFileId + SingleApp.UPLOAD_SCAN_URL;
         StringBuilder sb = new StringBuilder();
 
         HttpURLConnection httpURLConnection = null;
@@ -365,7 +365,7 @@ public class WebService {
                 byte[] imageData = stream.toByteArray();
 
                 sb.append("<upload_file>");
-                sb.append("<object_zname>" + scanCategory.type + "</object_zname>");
+                sb.append("<object_zname>" + form.type + "</object_zname>");
 
                 // if imageData is not empty
                 sb.append("<upload_file_name>android-picture.jpg</upload_file_name>"); // seems no error here...
@@ -376,7 +376,7 @@ public class WebService {
                 // end
             } else {
                 sb.append("<upload_file>");
-                sb.append("<object_zname>" + scanCategory.type + "</object_zname>");
+                sb.append("<object_zname>" + form.type + "</object_zname>");
 
                 // if imageData is not empty
                 sb.append("<upload_file_name>android-picture.jpg</upload_file_name>"); // seems no error here...
@@ -386,7 +386,7 @@ public class WebService {
 
             }
             sb.append("<les_champs>");
-            for (ScanField field : scanCategory.fields) {
+            for (FormField field : form.fields) {
                 if (field.type.equals("signature")) {
                     if (SingleApp.getSignature() != null) {
                         ByteArrayOutputStream sstream = new ByteArrayOutputStream();
@@ -416,8 +416,8 @@ public class WebService {
 
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setDoOutput(true);
-            httpURLConnection.setConnectTimeout(connectTimeOut);
-            httpURLConnection.setReadTimeout(readTimeOut);
+            httpURLConnection.setConnectTimeout(CONNECT_TIME_OUT);
+            httpURLConnection.setReadTimeout(READ_TIME_OUT);
 
             httpURLConnection.setRequestProperty("Accept-Language", "fr");
             httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);

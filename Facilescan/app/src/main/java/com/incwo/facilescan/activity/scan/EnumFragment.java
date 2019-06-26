@@ -13,7 +13,7 @@ import com.incwo.facilescan.R;
 import com.incwo.facilescan.helpers.fragments.BaseListFragment;
 import com.incwo.facilescan.managers.SingleApp;
 import com.incwo.facilescan.scan.BusinessFile;
-import com.incwo.facilescan.scan.ScanCategory;
+import com.incwo.facilescan.scan.Form;
 import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class EnumFragment extends BaseListFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	xml = SingleApp.getBusinessFilesList();
     	BusinessFile businessFile = SingleApp.getSelectedBusinessScanItem();
-    	ScanCategory objScanItem = businessFile.getObjectByName(SingleApp.getSelectedObjectScanItem());
+    	Form objScanItem = businessFile.getFormByName(SingleApp.getSelectedObjectScanItem());
     	mTitles = objScanItem.getFieldByName(getArguments().getString("fieldName")).valueTitles;
     	mValues = objScanItem.getFieldByName(getArguments().getString("fieldName")).values;
 
