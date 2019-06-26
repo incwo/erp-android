@@ -15,9 +15,9 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 public class BusinessFileXmlParsing extends DefaultHandler {
-	
-	StringBuilder sb;
-	
+	private BusinessFilesList mBusinessFilesList;
+	private StringBuilder sb;
+
 	public BusinessFileXmlParsing() {
 		sb = new StringBuilder();
 	}
@@ -35,46 +35,15 @@ public class BusinessFileXmlParsing extends DefaultHandler {
 		}
 	}
 
-	public BusinessFilesList readFromFile(String rssPath) {
-		try {
-			FileInputStream fileInputStream = new FileInputStream(rssPath);
-			BusinessFilesList businessFilesList = processSaxStream(fileInputStream);
-			fileInputStream.close();
-			return businessFilesList;
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public BusinessFilesList readFromUrl(String rssUrlPath) {
-		try {
-			URL url = new URL(rssUrlPath);
-			InputStream inputStream = url.openStream();
-			BusinessFilesList businessFilesList = processSaxStream(inputStream);
-			inputStream.close();
-			return businessFilesList;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	// Used to define what elements we are currently in
-	private String mCurrentElementName = "";
-
+	// To keep track of which XML element we're in:
 	private enum XmlElementType {
 		NONE,
 		BUSINESS_FILE,
 		OBJECT, // = Form
 		FIELD
 	}
-
+	private String mCurrentElementName = "";
 	private XmlElementType mCurrentElementType = XmlElementType.NONE;
-
-	private BusinessFilesList mBusinessFilesList;
 	private BusinessFile mCurrentBusinessFile;
 	private Form mCurrentForm;
 	private FormField mCurrentField;
