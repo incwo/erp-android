@@ -93,16 +93,16 @@ public class BusinessFilesFetch {
                 return result;
             }
 
-            XmlScanParser xmlScanParser = new XmlScanParser();
-            xmlScanParser.readFromXmlContent(webService.body);
-            if (xmlScanParser.xml == null) {
+            BusinessFileXmlParsing parser = new BusinessFileXmlParsing();
+            BusinessFilesList businessFilesList = parser.readFromXmlContent(webService.body);
+            if (businessFilesList == null) {
                 result.type = ResultType.INVALID_XML;
                 result.responseCode = responseCode;
                 return result;
             }
 
             result.type = ResultType.SUCCESS;
-            result.businessFiles = xmlScanParser.xml.businessFiles;
+            result.businessFiles = businessFilesList.businessFiles;
             return result;
         }
 
