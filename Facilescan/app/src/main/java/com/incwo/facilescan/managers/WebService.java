@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
@@ -350,82 +351,12 @@ public class WebService {
     // submit scan informations
     public void uploadForm(String businessFileId, Form form, Bitmap image) {
         String remoteUrl = SingleApp.getBaseURL() + "/" + businessFileId + SingleApp.UPLOAD_SCAN_URL;
-        StringBuilder sb = new StringBuilder();
-
-        HttpURLConnection httpURLConnection = null;
-
 
         try {
-
-            // convert bitmap to byte
-            if (image != null) {
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                int imageLength = stream.size();
-                byte[] imageData = stream.toByteArray();
-
-                sb.append("<upload_file>");
-                sb.append("<object_zname>" + form.type + "</object_zname>");
-
-                // if imageData is not empty
-                sb.append("<upload_file_name>android-picture.jpg</upload_file_name>"); // seems no error here...
-                sb.append("<upload_file_size>" + imageLength + "</upload_file_size>");
-                sb.append("<file_data_base64>");
-                sb.append(Base64.encodeBytes(imageData));
-                sb.append("</file_data_base64>");
-                // end
-            } else {
-                sb.append("<upload_file>");
-                sb.append("<object_zname>" + form.type + "</object_zname>");
-
-                // if imageData is not empty
-                sb.append("<upload_file_name>android-picture.jpg</upload_file_name>"); // seems no error here...
-                sb.append("<upload_file_size>" + "</upload_file_size>");
-                sb.append("<file_data_base64>");
-                sb.append("</file_data_base64>");
-
-            }
-            sb.append("<les_champs>");
-            for (FormField field : form.fields) {
-                if (field.type.equals("signature")) {
-                    if (SingleApp.getSignature() != null) {
-                        ByteArrayOutputStream sstream = new ByteArrayOutputStream();
-                        Bitmap signature = SingleApp.getSignature();
-                        signature.compress(Bitmap.CompressFormat.PNG, 100, sstream);
-                        byte[] signatureData = sstream.toByteArray();
-
-                        sb.append("<" + field.key + ">");
-                        sb.append("<file_name>" + field.key + ".png</file_name>\n");
-                        sb.append("<file_size>" + sstream.size() + "</file_size>\n");
-                        sb.append("<file_data_base64>" + Base64.encodeBytes(signatureData) + "</file_data_base64>\n");
-                        sb.append("</" + field.key + ">");
-
-                        SingleApp.clearSignature();
-                    }
-                } else {
-                    sb.append("<" + field.key + ">" + field.valueHolder.getText() + "</" + field.key + ">");
-                }
-            }
-            sb.append("</les_champs>");
-            sb.append("</upload_file>");
-            String postData = sb.toString();
-
+            String postData = buildPOSTData(form, image);
             URL url = new URL(remoteUrl);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.addRequestProperty("Cookie", SingleApp.getSessionId());
-
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setConnectTimeout(CONNECT_TIME_OUT);
-            httpURLConnection.setReadTimeout(READ_TIME_OUT);
-
-            httpURLConnection.setRequestProperty("Accept-Language", "fr");
-            httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
-            httpURLConnection.setRequestProperty("Content-Length", String.valueOf(postData.length()));
-            httpURLConnection.setRequestProperty("Content-Type", "application/xml");
-            httpURLConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken());
-            httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
-
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            setPOSTFormConnectionHeaders(httpURLConnection, postData.length());
             httpURLConnection.connect();
 
             OutputStreamWriter writer = new OutputStreamWriter(httpURLConnection.getOutputStream());
@@ -462,6 +393,77 @@ public class WebService {
             //			manageError(e);
         }
 
+    }
+
+    private String buildPOSTData(Form form, Bitmap image) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<upload_file>");
+        sb.append("<object_zname>" + form.type + "</object_zname>");
+
+        if (image != null) {
+            sb.append(buildImageTags(image));
+        }
+
+        sb.append("<les_champs>");
+        for (FormField field : form.fields) {
+            if (field.type.equals("signature")) {
+                Bitmap signature = SingleApp.getSignature();
+                if (signature != null) {
+                    sb.append(buildSignatureTags(signature, field.key));
+                    SingleApp.clearSignature();
+                }
+            } else {
+                String tags = "<" + field.key + ">" + field.valueHolder.getText() + "</" + field.key + ">";
+                sb.append(tags);
+            }
+        }
+        sb.append("</les_champs>");
+        sb.append("</upload_file>");
+        return sb.toString();
+    }
+
+    private String buildImageTags(Bitmap image) {
+        StringBuilder stringBuilder = new StringBuilder();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] imageData = stream.toByteArray();
+
+        stringBuilder.append("<upload_file_name>android-picture.jpg</upload_file_name>"); // seems no error here...
+        stringBuilder.append("<upload_file_size>" + stream.size() + "</upload_file_size>");
+        stringBuilder.append("<file_data_base64>");
+        stringBuilder.append(Base64.encodeBytes(imageData));
+        stringBuilder.append("</file_data_base64>");
+        return stringBuilder.toString();
+    }
+
+    private String buildSignatureTags(Bitmap signature, String fieldKey) {
+        StringBuilder stringBuilder = new StringBuilder();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        signature.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] signatureData = stream.toByteArray();
+
+        stringBuilder.append("<" + fieldKey + ">");
+        stringBuilder.append("<file_name>" + fieldKey + ".png</file_name>\n");
+        stringBuilder.append("<file_size>" + stream.size() + "</file_size>\n");
+        stringBuilder.append("<file_data_base64>" + Base64.encodeBytes(signatureData) + "</file_data_base64>\n");
+        stringBuilder.append("</" + fieldKey + ">");
+        return stringBuilder.toString();
+    }
+
+    private void setPOSTFormConnectionHeaders(HttpURLConnection httpURLConnection, int contentLength) throws ProtocolException {
+        httpURLConnection.addRequestProperty("Cookie", SingleApp.getSessionId());
+
+        httpURLConnection.setRequestMethod("POST");
+        httpURLConnection.setDoOutput(true);
+        httpURLConnection.setConnectTimeout(CONNECT_TIME_OUT);
+        httpURLConnection.setReadTimeout(READ_TIME_OUT);
+
+        httpURLConnection.setRequestProperty("Accept-Language", "fr");
+        httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
+        httpURLConnection.setRequestProperty("Content-Length", String.valueOf(contentLength));
+        httpURLConnection.setRequestProperty("Content-Type", "application/xml");
+        httpURLConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken());
+        httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
     }
 
 
