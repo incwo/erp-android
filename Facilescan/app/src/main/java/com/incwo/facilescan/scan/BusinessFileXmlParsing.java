@@ -48,66 +48,64 @@ public class BusinessFileXmlParsing extends DefaultHandler {
 	private FormField mCurrentField;
 
 	public void startElement(String uri, String name, String qName, Attributes atts) {
-		String elementName = name.trim();
 		sb.setLength(0); // efficient way to clear the StringBuilder
 		
-		if (elementName.equals("business_file")) {
+		if (name.equals("business_file")) {
 			mCurrentElementType = XmlElementType.BUSINESS_FILE;
 			mCurrentBusinessFile = new BusinessFile();
 		} 
-		else if (mCurrentElementType == XmlElementType.BUSINESS_FILE && elementName.equals("object")) {
+		else if (mCurrentElementType == XmlElementType.BUSINESS_FILE && name.equals("object")) {
 			mCurrentElementType = XmlElementType.OBJECT;
 			mCurrentForm = new Form();
 		}
-		else if (mCurrentElementType == XmlElementType.OBJECT && elementName.equals("les_champs")) {
+		else if (mCurrentElementType == XmlElementType.OBJECT && name.equals("les_champs")) {
 			mCurrentElementType = XmlElementType.FIELD;
 			mCurrentField = new FormField();
 		}
 
-		if (elementName.equals("la_valeur")) {
+		if (name.equals("la_valeur")) {
 			mCurrentField.values.add(atts.getValue("key"));
 		}
 	}
 
 	public void endElement(String uri, String name, String qName) throws SAXException {
-		String elementName = name.trim();
 		String value = sb.toString().trim();
 		try {
 			if (mCurrentElementType == XmlElementType.NONE) {
 				// everything is done
 			}
 			else if (mCurrentElementType == XmlElementType.BUSINESS_FILE) {
-				if (elementName.equals("id"))
+				if (name.equals("id"))
 					mCurrentBusinessFile.id = value;
-				else if (elementName.equals("name"))
+				else if (name.equals("name"))
 					mCurrentBusinessFile.name = value;
-				else if (elementName.equals("kind"))
-					mCurrentBusinessFile.kind = elementName;
+				else if (name.equals("kind"))
+					mCurrentBusinessFile.kind = value;
 			}
 			else if (mCurrentElementType == XmlElementType.OBJECT) {
-				if (elementName.equals("lobjet"))
+				if (name.equals("lobjet"))
 					mCurrentForm.className = value;
-				else if (elementName.equals("la_classe"))
+				else if (name.equals("la_classe"))
 					mCurrentForm.type = value;
 			}
 			else if (mCurrentElementType == XmlElementType.FIELD) {
-				if (elementName.equals("le_nom"))
+				if (name.equals("le_nom"))
 					mCurrentField.name = value;
-				else if (elementName.equals("le_champ"))
+				else if (name.equals("le_champ"))
 					mCurrentField.key = value;
-				else if (elementName.equals("le_type")) {
+				else if (name.equals("le_type")) {
 					if (value.equals("my_signature"))
 						mCurrentField.type = "signature";
 					else
 						mCurrentField.type = value;
 				}
-				else if (elementName.equals("la_classe"))
+				else if (name.equals("la_classe"))
 					mCurrentField.classValue = value;
-				else if (elementName.equals("la_valeur")) {
+				else if (name.equals("la_valeur")) {
 					mCurrentField.valueTitles.add(value);
 				
 				}
-				else if (elementName.equals("description"))
+				else if (name.equals("description"))
 					mCurrentField.description = value;
 			}
 		} catch (Exception e) {
@@ -145,7 +143,8 @@ public class BusinessFileXmlParsing extends DefaultHandler {
 				mBusinessFilesList = new BusinessFilesList();
 	
 				SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-				saxParserFactory.setValidating(false); 
+				saxParserFactory.setValidating(false);
+				saxParserFactory.setNamespaceAware(true); // Needed for unit tests or the localName is always empty.
 				SAXParser saxParser = saxParserFactory.newSAXParser();
 				XMLReader xmlReader = saxParser.getXMLReader();
 				xmlReader.setContentHandler(this);		
