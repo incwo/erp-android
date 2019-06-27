@@ -11,6 +11,9 @@ android {
         versionName "1.6.1"
     }
 
+    // Directory of test assets
+    sourceSets.test.resources.srcDirs += ["src/test/assets"]
+
     buildTypes {
         release {
             minifyEnabled false
@@ -25,6 +28,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.google.firebase:firebase-core:17.0.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    implementation 'org.hamcrest:hamcrest:2.1'
+    implementation 'org.mockito:mockito-core:2.28.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
