@@ -42,73 +42,72 @@ public class BusinessFileXmlParsing extends DefaultHandler {
 		OBJECT, // = Form
 		FIELD
 	}
-	private String mCurrentElementName = "";
 	private XmlElementType mCurrentElementType = XmlElementType.NONE;
 	private BusinessFile mCurrentBusinessFile;
 	private Form mCurrentForm;
 	private FormField mCurrentField;
 
 	public void startElement(String uri, String name, String qName, Attributes atts) {
-		mCurrentElementName = name.trim();
+		String elementName = name.trim();
 		sb.setLength(0); // efficient way to clear the StringBuilder
 		
-		if (mCurrentElementName.equals("business_file")) {
+		if (elementName.equals("business_file")) {
 			mCurrentElementType = XmlElementType.BUSINESS_FILE;
 			mCurrentBusinessFile = new BusinessFile();
 		} 
-		else if (mCurrentElementType == XmlElementType.BUSINESS_FILE && mCurrentElementName.equals("object")) {
+		else if (mCurrentElementType == XmlElementType.BUSINESS_FILE && elementName.equals("object")) {
 			mCurrentElementType = XmlElementType.OBJECT;
 			mCurrentForm = new Form();
 		}
-		else if (mCurrentElementType == XmlElementType.OBJECT && mCurrentElementName.equals("les_champs")) {
+		else if (mCurrentElementType == XmlElementType.OBJECT && elementName.equals("les_champs")) {
 			mCurrentElementType = XmlElementType.FIELD;
 			mCurrentField = new FormField();
 		}
 
-		if (mCurrentElementName.equals("la_valeur")) {
+		if (elementName.equals("la_valeur")) {
 			mCurrentField.values.add(atts.getValue("key"));
 		}
 	}
 
 	public void endElement(String uri, String name, String qName) throws SAXException {
-		mCurrentElementName = name.trim();
+		String elementName = name.trim();
 		String value = sb.toString().trim();
 		try {
 			if (mCurrentElementType == XmlElementType.NONE) {
 				// everything is done
 			}
 			else if (mCurrentElementType == XmlElementType.BUSINESS_FILE) {
-				if (mCurrentElementName.equals("id"))
+				if (elementName.equals("id"))
 					mCurrentBusinessFile.id = value;
-				else if (mCurrentElementName.equals("name"))
+				else if (elementName.equals("name"))
 					mCurrentBusinessFile.name = value;
-				else if (mCurrentElementName.equals("kind"))
-					mCurrentBusinessFile.kind = mCurrentElementName;
+				else if (elementName.equals("kind"))
+					mCurrentBusinessFile.kind = elementName;
 			}
 			else if (mCurrentElementType == XmlElementType.OBJECT) {
-				if (mCurrentElementName.equals("lobjet"))
+				if (elementName.equals("lobjet"))
 					mCurrentForm.className = value;
-				else if (mCurrentElementName.equals("la_classe"))
+				else if (elementName.equals("la_classe"))
 					mCurrentForm.type = value;
 			}
 			else if (mCurrentElementType == XmlElementType.FIELD) {
-				if (mCurrentElementName.equals("le_nom"))
+				if (elementName.equals("le_nom"))
 					mCurrentField.name = value;
-				else if (mCurrentElementName.equals("le_champ"))
+				else if (elementName.equals("le_champ"))
 					mCurrentField.key = value;
-				else if (mCurrentElementName.equals("le_type")) {
+				else if (elementName.equals("le_type")) {
 					if (value.equals("my_signature"))
 						mCurrentField.type = "signature";
 					else
 						mCurrentField.type = value;
 				}
-				else if (mCurrentElementName.equals("la_classe"))
+				else if (elementName.equals("la_classe"))
 					mCurrentField.classValue = value;
-				else if (mCurrentElementName.equals("la_valeur")) {
+				else if (elementName.equals("la_valeur")) {
 					mCurrentField.valueTitles.add(value);
 				
 				}
-				else if (mCurrentElementName.equals("description"))
+				else if (elementName.equals("description"))
 					mCurrentField.description = value;
 			}
 		} catch (Exception e) {
