@@ -15,6 +15,7 @@ import com.incwo.facilescan.managers.SingleApp;
 import com.incwo.facilescan.scan.BusinessFile;
 import com.incwo.facilescan.scan.Form;
 import com.incwo.facilescan.scan.BusinessFilesList;
+import com.incwo.facilescan.scan.FormField;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ public class EnumFragment extends BaseListFragment {
 
 	private BusinessFilesList xml = null;
 	private View mRoot;
-	private ArrayList<String> mValues;
+	private ArrayList<FormField.KeyValue> mKeyValues;
 	private ArrayList<String> mTitles;
 	
     @Override
@@ -30,8 +31,7 @@ public class EnumFragment extends BaseListFragment {
     	xml = SingleApp.getBusinessFilesList();
     	BusinessFile businessFile = SingleApp.getSelectedBusinessScanItem();
     	Form objScanItem = businessFile.getFormByName(SingleApp.getSelectedObjectScanItem());
-    	mTitles = objScanItem.getFieldByName(getArguments().getString("fieldName")).valueTitles;
-    	mValues = objScanItem.getFieldByName(getArguments().getString("fieldName")).values;
+    	mKeyValues = objScanItem.getFieldByName(getArguments().getString("fieldName")).keyValues;
 
     	EnumAdapter enumAdapter = new EnumAdapter(this.getActivity(), mTitles);
         setListAdapter(enumAdapter);

@@ -2,16 +2,25 @@ package com.incwo.facilescan.scan;
 
 import android.widget.TextView;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FormField {
+	static public class KeyValue {
+		public String key;
+		public String value;
+		KeyValue(String key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+	}
+
 	public String name; // Localized, human-readable title of the field
 	public String key; // Key to send the field to the server
 	public String type; // Type of the field = string|signature|enum
 	public String classValue;
-	public ArrayList<String> valueTitles; // Enum input. Presented in the EnumFragment.
-	public ArrayList<String> values; // Enum input
+	public ArrayList<KeyValue> keyValues; // Enum input. Presented in the EnumFragment.
 	public String description;
 
 	// This is terrible. The TextView which holds the value (typed by the user or chosen from an enum)
@@ -26,8 +35,7 @@ public class FormField {
 		  name = "";
 		  key = "";
 		  type = "";
-		  valueTitles = new ArrayList<String>();
-		  values= new ArrayList<String>();
+		  keyValues = new ArrayList<KeyValue>();
 		  description = "";
 		  savedValue = null;
 	}
@@ -48,16 +56,14 @@ public class FormField {
 		return classValue;
 	}
 	
-	public ArrayList<String> getValueTitles() {
-		return valueTitles;
+	public ArrayList<KeyValue> getKeyValues() {
+		return keyValues;
 	}
 
-	
-	public ArrayList<String> getValues() {
-		return values;
+	public void addKeyValue(KeyValue keyValue) {
+		keyValues.add(keyValue);
 	}
-	
-	
+
 	public String getDescription() {
 		return description;
 	}

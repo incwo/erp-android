@@ -31,7 +31,7 @@ public class ObjectScanFragment extends BaseListFragment {
     	xml = SingleApp.getBusinessFilesList();
     	selectedItem = SingleApp.getSelectedBusinessScanItem();
     	
-        ObjectScanAdapter objectScanAdapter = new ObjectScanAdapter(this.getActivity(), selectedItem.objectsName);
+        ObjectScanAdapter objectScanAdapter = new ObjectScanAdapter(this.getActivity(), selectedItem.getFormNames());
         setListAdapter(objectScanAdapter);
 		mRoot = inflater.inflate(R.layout.videos_fragment, null);
 		return mRoot;

@@ -59,17 +59,20 @@ class BusinessFileXmlParsingTest {
         assertEquals("Quand", whenField.name);
         assertEquals("days", whenField.key);
         assertEquals("enum", whenField.type);
-        assertEquals("1", whenField.values.get(0));
-        assertEquals("Demain", whenField.valueTitles.get(0));
-        assertEquals("30", whenField.values.get(4));
-        assertEquals("D'ici 1 mois", whenField.valueTitles.get(4));
+        FormField.KeyValue keyValue0 = whenField.keyValues.get(0);
+        assertEquals("1", keyValue0.key);
+        assertEquals("Demain", keyValue0.value);
+        FormField.KeyValue keyValue4 = whenField.keyValues.get(4);
+        assertEquals("30", keyValue4.key);
+        assertEquals("D'ici 1 mois", keyValue4.value);
 
         FormField whoField = contactForm.fields.get(2);
         assertEquals("Qui", whoField.name);
         assertEquals("assigned_user_id", whoField.key);
         assertEquals("enum", whoField.type);
-        assertEquals("537348", whoField.values.get(15));
-        assertEquals("Renaud Pradenc", whoField.valueTitles.get(15));
+        FormField.KeyValue keyValue15 = whoField.keyValues.get(15);
+        assertEquals("537348", keyValue15.key);
+        assertEquals("Renaud Pradenc", keyValue15.value);
     }
 
     @Test

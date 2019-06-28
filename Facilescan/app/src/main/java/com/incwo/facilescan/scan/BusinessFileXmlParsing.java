@@ -137,8 +137,10 @@ public class BusinessFileXmlParsing extends DefaultHandler {
 
 			case "la_valeur":
 				if (parentTag.equals("les_champs")) {
-					mCurrentField.valueTitles.add(value);
-					mCurrentField.values.add(mCurrentValueKey);
+					if(mCurrentValueKey == null) { // The key was not given in the starting tag.
+						break;
+					}
+					mCurrentField.addKeyValue(new FormField.KeyValue(mCurrentValueKey, value));
 				}
 				mCurrentValueKey = null;
 				break;

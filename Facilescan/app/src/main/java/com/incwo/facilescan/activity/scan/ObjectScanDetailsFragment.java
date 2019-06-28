@@ -44,7 +44,6 @@ public class ObjectScanDetailsFragment extends TabFragment {
     private static final String FILE_PROVIDER_AUTHORITY = "com.incwo.facilescan.fileprovider";
 
     private View mRoot;
-    private BusinessFilesList xml = null;
     private Form mSelectedItem;
     private FormField lastClickedField = null;
     private AsyncTask<?, ?, ?> SendTask = null;
@@ -61,7 +60,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        xml = SingleApp.getBusinessFilesList();
+        BusinessFilesList businessFilesList = SingleApp.getBusinessFilesList();
         BusinessFile selectedBusiness = SingleApp.getSelectedBusinessScanItem();
         mSelectedItem = selectedBusiness.getFormByName(SingleApp.getSelectedObjectScanItem());
 

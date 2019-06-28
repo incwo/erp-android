@@ -7,14 +7,12 @@ public class BusinessFile {
 	public String name;
 	public String kind;
 	protected ArrayList<Form> mForms;
-	public ArrayList<String> objectsName;
-	
+
 	public BusinessFile() {
 		id = "";
 		name = "";
 		kind = "";
 		mForms = new ArrayList<Form>();
-		objectsName = new ArrayList<String>();
 	}
 
 	public Form getFormByName(String name)
@@ -25,6 +23,14 @@ public class BusinessFile {
 				return form;
 		}
 		return null;
+	}
+
+	public ArrayList<String> getFormNames() {
+		ArrayList<String> formNames = new ArrayList<>();
+		for (Form form: mForms) {
+			formNames.add(form.className);
+		}
+		return formNames;
 	}
 	
 	public String getId() {
