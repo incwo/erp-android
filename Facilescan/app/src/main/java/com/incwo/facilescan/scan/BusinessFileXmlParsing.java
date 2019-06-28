@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -35,100 +36,161 @@ public class BusinessFileXmlParsing extends DefaultHandler {
 		}
 	}
 
-	// To keep track of which XML element we're in:
-	private enum XmlElementType {
-		NONE,
-		BUSINESS_FILE,
-		OBJECT, // = Form
-		FIELD
-	}
-	private XmlElementType mCurrentElementType = XmlElementType.NONE;
+	private Stack<String> tagStack = new Stack<String>();
 	private BusinessFile mCurrentBusinessFile;
+	private FormFolder mCurrentFolder;
 	private Form mCurrentForm;
 	private FormField mCurrentField;
+	private String mCurrentValueKey;
+
+	private class XmlTag {
+		private String mIdentifier;
+		XmlTag(String identifier, Attributes atts) {
+			mIdentifier = identifier;
+		}
+
+		private StringBuilder mStringBuilder;
+		void appendCharacters(char ch[], int start, int length) {
+			for (int i=start; i<start+length; i++) {
+				mStringBuilder.append(ch[i]);
+			}
+		}
+	}
 
 	public void startElement(String uri, String name, String qName, Attributes atts) {
 		sb.setLength(0); // efficient way to clear the StringBuilder
-		
-		if (name.equals("business_file")) {
-			mCurrentElementType = XmlElementType.BUSINESS_FILE;
-			mCurrentBusinessFile = new BusinessFile();
-		} 
-		else if (mCurrentElementType == XmlElementType.BUSINESS_FILE && name.equals("object")) {
-			mCurrentElementType = XmlElementType.OBJECT;
-			mCurrentForm = new Form();
-		}
-		else if (mCurrentElementType == XmlElementType.OBJECT && name.equals("les_champs")) {
-			mCurrentElementType = XmlElementType.FIELD;
-			mCurrentField = new FormField();
-		}
 
-		if (name.equals("la_valeur")) {
-			mCurrentField.values.add(atts.getValue("key"));
+		tagStack.push(name); // Track the tags hierarchy
+		switch (name) {
+			case "business_file":
+				mCurrentBusinessFile = new BusinessFile();
+				break;
+
+			case "folder":
+				mCurrentFolder = new FormFolder(atts.getValue("title"));
+				break;
+
+			case "les_champs":
+				mCurrentField = new FormField();
+				break;
+
+			case "object":
+				mCurrentForm = new Form();
+				break;
+
+			case "la_valeur":
+				mCurrentValueKey = atts.getValue("key");
+				break;
+
+				// Other tags don't correspond to objects.
 		}
 	}
 
 	public void endElement(String uri, String name, String qName) throws SAXException {
-		String value = sb.toString().trim();
-		try {
-			if (mCurrentElementType == XmlElementType.NONE) {
-				// everything is done
-			}
-			else if (mCurrentElementType == XmlElementType.BUSINESS_FILE) {
-				if (name.equals("id"))
+		String value = sb.toString();
+		String topTag = tagStack.pop(); // Point to the parent tag since this tag is now closed.
+		if (!(name.equals(topTag))) {
+			throw new SAXException(); // Closing a tag which is not the current one.
+		}
+
+		if(tagStack.empty()) { // No parent tag
+			return;
+		}
+
+		String parentTag = tagStack.peek();
+		switch (name) {
+			case "business_file":
+				mBusinessFilesList.businessFiles.add(mCurrentBusinessFile);
+				mCurrentBusinessFile = null;
+				break;
+
+			case "description":
+				if (parentTag.equals("les_champs")) {
+					mCurrentField.description = value;
+				}
+				break;
+
+			case "folder":
+				if (parentTag.equals("business_file")) {
+					//mCurrentBusinessFile.addFolder(mCurrentFolder);
+				}
+				mCurrentFolder = null;
+				break;
+
+			case "id":
+				if (parentTag.equals("business_file")) {
 					mCurrentBusinessFile.id = value;
-				else if (name.equals("name"))
-					mCurrentBusinessFile.name = value;
-				else if (name.equals("kind"))
+				}
+				break;
+
+			case "kind":
+				if (parentTag.equals("business_file")) {
 					mCurrentBusinessFile.kind = value;
-			}
-			else if (mCurrentElementType == XmlElementType.OBJECT) {
-				if (name.equals("lobjet"))
-					mCurrentForm.className = value;
-				else if (name.equals("la_classe"))
+				}
+				break;
+
+			case "la_classe":
+				if (parentTag.equals("object")) {
 					mCurrentForm.type = value;
-			}
-			else if (mCurrentElementType == XmlElementType.FIELD) {
-				if (name.equals("le_nom"))
-					mCurrentField.name = value;
-				else if (name.equals("le_champ"))
+				}
+				break;
+
+			case "la_valeur":
+				if (parentTag.equals("les_champs")) {
+					mCurrentField.valueTitles.add(value);
+					mCurrentField.values.add(mCurrentValueKey);
+				}
+				mCurrentValueKey = null;
+				break;
+
+			case "le_champ":
+				if (parentTag.equals("les_champs")) {
 					mCurrentField.key = value;
-				else if (name.equals("le_type")) {
+				}
+				break;
+
+			case "le_nom":
+				if (parentTag.equals("les_champs")) {
+					mCurrentField.name = value;
+				}
+				break;
+
+			case "le_type":
+				if (parentTag.equals("les_champs")) {
 					if (value.equals("my_signature"))
 						mCurrentField.type = "signature";
 					else
 						mCurrentField.type = value;
 				}
-				else if (name.equals("la_classe"))
-					mCurrentField.classValue = value;
-				else if (name.equals("la_valeur")) {
-					mCurrentField.valueTitles.add(value);
-				
+				break;
+
+			case "les_champs":
+				if (parentTag.equals("object")) {
+					mCurrentForm.fields.add(mCurrentField);
 				}
-				else if (name.equals("description"))
-					mCurrentField.description = value;
-			}
-		} catch (Exception e) {
-		}
-		
-		if (name.trim().equals("les_champs")) {
-			mCurrentElementType = XmlElementType.OBJECT;
-			if ((!mCurrentField.name.equals("")))
-				mCurrentForm.fields.add(mCurrentField);
-		}
-		else if (name.trim().equals("object")) {
-			mCurrentElementType = XmlElementType.BUSINESS_FILE;
-			if ((!mCurrentForm.className.equals("")) && (!mCurrentForm.type.equals("")))
-			{
-				mCurrentBusinessFile.mForms.add(mCurrentForm);
-				mCurrentBusinessFile.objectsName.add(mCurrentForm.className);
-			}
-		}
-		else if (name.trim().equals("business_file")) {
-			mCurrentElementType = XmlElementType.NONE;
-			if ((!mCurrentBusinessFile.id.equals("")) && (!mCurrentBusinessFile.name.equals(""))) {
-				mBusinessFilesList.businessFiles.add(mCurrentBusinessFile);
-			}
+				mCurrentField = null;
+				break;
+
+			case "lobjet":
+				if (parentTag.equals("object")) {
+					mCurrentForm.className = value;
+				}
+				break;
+
+			case "name":
+				if (parentTag.equals("business_file")) {
+					mCurrentBusinessFile.name = value;
+				}
+				break;
+
+			case "object":
+				if (parentTag.equals("business_file")) {
+					mCurrentBusinessFile.mForms.add(mCurrentForm);
+				} else if (parentTag.equals("folder")) {
+					// mCurrentForm.add(mCurrentForm)
+				}
+				mCurrentForm = null;
+				break;
 		}
 	}
 
