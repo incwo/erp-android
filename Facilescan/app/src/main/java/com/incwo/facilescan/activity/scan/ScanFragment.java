@@ -172,7 +172,8 @@ public class ScanFragment extends BaseListFragment {
         super.onListItemClick(l, v, position, id);
 
         BusinessFile selectedBusinessFile = SingleApp.getBusinessFilesList().businessFiles.get(position);
-        getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, BusinessFileFragment.newInstance(selectedBusinessFile));
+        FormListFragment fragment = FormListFragment.newInstance(selectedBusinessFile.id, selectedBusinessFile.getForms());
+        getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, fragment);
     }
 
     private class BusinessItemAdapter extends ArrayAdapter<BusinessFile> {
