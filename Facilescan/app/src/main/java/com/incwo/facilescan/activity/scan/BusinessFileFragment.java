@@ -19,37 +19,35 @@ import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.util.ArrayList;
 
-public class ObjectScanFragment extends BaseListFragment {
+public class BusinessFileFragment extends BaseListFragment {
 
-	private BusinessFilesList xml = null;
-	private BusinessFile selectedItem;
-	private View mRoot;
-	
+	private BusinessFile mBusinessFile;
+
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-    	xml = SingleApp.getBusinessFilesList();
-    	selectedItem = SingleApp.getSelectedBusinessScanItem();
+    	BusinessFilesList businessFilesList = SingleApp.getBusinessFilesList();
+    	mBusinessFile = SingleApp.getSelectedBusinessFile();
     	
-        ObjectScanAdapter objectScanAdapter = new ObjectScanAdapter(this.getActivity(), selectedItem.getFormNames());
-        setListAdapter(objectScanAdapter);
-		mRoot = inflater.inflate(R.layout.videos_fragment, null);
-		return mRoot;
+        BusinessFileAdapter businessFileAdapter = new BusinessFileAdapter(this.getActivity(), mBusinessFile.getFormClassNames());
+        setListAdapter(businessFileAdapter);
+		View root = inflater.inflate(R.layout.videos_fragment, null);
+		return root;
 	}
     
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Form item = selectedItem.getForms().get(position);
-        SingleApp.setSelectedObjectScanItem(item.className);
+        Form form = mBusinessFile.getForms().get(position);
+        SingleApp.setSelectedFormClassName(form.className);
         
-        getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, new ObjectScanDetailsFragment());
+        getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, new FormFragment());
     }
     
-    private class ObjectScanAdapter extends ArrayAdapter<String> {  
+    private class BusinessFileAdapter extends ArrayAdapter<String> {
 		private LayoutInflater mInflater;
 
-		ObjectScanAdapter(Activity context, ArrayList<String> arrayList) {
+		BusinessFileAdapter(Activity context, ArrayList<String> arrayList) {
 			super(context, R.layout.object_scan_row, arrayList);
 			mInflater = LayoutInflater.from(context);
 		}

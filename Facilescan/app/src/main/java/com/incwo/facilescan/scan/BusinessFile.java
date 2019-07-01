@@ -15,17 +15,17 @@ public class BusinessFile {
 		mForms = new ArrayList<Form>();
 	}
 
-	public Form getFormByName(String name)
+	public Form getFormByClassName(String className)
 	{
 		for (Form form: mForms)
 		{
-			if (form.className.equals(name))
+			if (form.className.equals(className))
 				return form;
 		}
 		return null;
 	}
 
-	public ArrayList<String> getFormNames() {
+	public ArrayList<String> getFormClassNames() {
 		ArrayList<String> formNames = new ArrayList<>();
 		for (Form form: mForms) {
 			formNames.add(form.className);

@@ -49,8 +49,8 @@ public class SignatureCanvasFragment extends TabFragment {
     	your_signature.setText(R.string.your_signature);
     	
     	xml = SingleApp.getBusinessFilesList();
-    	BusinessFile businessFile = SingleApp.getSelectedBusinessScanItem();
-    	selectedItem = businessFile.getFormByName(SingleApp.getSelectedObjectScanItem());
+    	BusinessFile businessFile = SingleApp.getSelectedBusinessFile();
+    	selectedItem = businessFile.getFormByClassName(SingleApp.getSelectedFormClassName());
     	
     	TextView title = (TextView) mRoot.findViewById(R.id.signature_title);
     	if(selectedItem.fields.get(0).getDescription() != null)

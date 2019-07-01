@@ -38,13 +38,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ObjectScanDetailsFragment extends TabFragment {
+/** A fragment to present the content of a Form. */
+public class FormFragment extends TabFragment {
     private static int PICK_PHOTO_REQUEST = 11;
 
     private static final String FILE_PROVIDER_AUTHORITY = "com.incwo.facilescan.fileprovider";
 
     private View mRoot;
-    private Form mSelectedItem;
+    private Form mForm;
     private FormField lastClickedField = null;
     private AsyncTask<?, ?, ?> SendTask = null;
     private boolean mIsPhotoTaken = false;
@@ -61,8 +62,8 @@ public class ObjectScanDetailsFragment extends TabFragment {
         super.onCreate(savedInstanceState);
 
         BusinessFilesList businessFilesList = SingleApp.getBusinessFilesList();
-        BusinessFile selectedBusiness = SingleApp.getSelectedBusinessScanItem();
-        mSelectedItem = selectedBusiness.getFormByName(SingleApp.getSelectedObjectScanItem());
+        BusinessFile selectedBusiness = SingleApp.getSelectedBusinessFile();
+        mForm = selectedBusiness.getFormByClassName(SingleApp.getSelectedFormClassName());
 
         handleReturnOfPreviousFragment();
     }
@@ -80,7 +81,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
         super.onStop();
 
         // Save the contents of the text views into the fields
-        for(FormField field: mSelectedItem.fields) {
+        for(FormField field: mForm.fields) {
             TextView valueHolder = field.valueHolder;
             if(valueHolder != null) { // e.g.: null for Signature fields
                 field.savedValue = field.valueHolder.getText().toString();
@@ -111,7 +112,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
 
     private void buildForm(LayoutInflater inflater, LinearLayout containerLayout) {
         int position = 0;
-        for (FormField field : mSelectedItem.fields) {
+        for (FormField field : mForm.fields) {
             View view;
             if (field.type.equals("signature")) {
                view = createSignatureFieldView(inflater, containerLayout, field);
@@ -318,7 +319,7 @@ public class ObjectScanDetailsFragment extends TabFragment {
 
     @Nullable
     private FormField findFieldForValueHolder(View valueHolder) {
-        for(FormField field: mSelectedItem.fields) {
+        for(FormField field: mForm.fields) {
             if(field.valueHolder.getId() == valueHolder.getId()) {
                 return field;
             }
@@ -338,12 +339,12 @@ public class ObjectScanDetailsFragment extends TabFragment {
         public void onClick(View view) {
 
             if (mHasSignature) {
-                if (mIsPhotoTaken == false && SingleApp.getSignature() == null) // if photo field and signature field are empty, force signature
+                if (!mIsPhotoTaken && SingleApp.getSignature() == null) // if photo field and signature field are empty, force signature
                     mSignClickListener.onClick(view);
                 else
                     SendTask = new AsyncTaskSendScan().execute();
             } else {
-                if (mIsPhotoTaken == false)  // if photo field is empty, force signature
+                if (!mIsPhotoTaken)  // if photo field is empty, force signature
                     mTakePhotoListener.onClick(view);
                 else
                     SendTask = new AsyncTaskSendScan().execute();
@@ -363,11 +364,11 @@ public class ObjectScanDetailsFragment extends TabFragment {
 
             WebService ws = new WebService();
 
-            BusinessFile businessFile = SingleApp.getSelectedBusinessScanItem();
+            BusinessFile businessFile = SingleApp.getSelectedBusinessFile();
             if (mIsPhotoTaken)
-                ws.uploadForm(businessFile.id, mSelectedItem, mBitmap);
+                ws.uploadForm(businessFile.id, mForm, mBitmap);
             else
-                ws.uploadForm(businessFile.id, mSelectedItem, null);
+                ws.uploadForm(businessFile.id, mForm, null);
 
             return (long) ws.responseCode;
         }

@@ -29,8 +29,8 @@ public class EnumFragment extends BaseListFragment {
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	xml = SingleApp.getBusinessFilesList();
-    	BusinessFile businessFile = SingleApp.getSelectedBusinessScanItem();
-    	Form objScanItem = businessFile.getFormByName(SingleApp.getSelectedObjectScanItem());
+    	BusinessFile businessFile = SingleApp.getSelectedBusinessFile();
+    	Form objScanItem = businessFile.getFormByClassName(SingleApp.getSelectedFormClassName());
     	mKeyValues = objScanItem.getFieldByName(getArguments().getString("fieldName")).keyValues;
 
     	EnumAdapter enumAdapter = new EnumAdapter(this.getActivity(), mTitles);

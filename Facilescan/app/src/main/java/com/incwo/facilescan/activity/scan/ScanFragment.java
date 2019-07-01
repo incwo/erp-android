@@ -29,6 +29,9 @@ import com.incwo.facilescan.scan.BusinessFilesFetch;
 
 import java.util.ArrayList;
 
+/**
+ * A fragment presented as the root of the Scan tab.
+ */
 public class ScanFragment extends BaseListFragment {
 
     static final private int SIGN_IN_FLIPPER_INDEX = 0;
@@ -167,8 +170,8 @@ public class ScanFragment extends BaseListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        SingleApp.setSelectedBusinessScanItem(SingleApp.getBusinessFilesList().businessFiles.get(position));
-        getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, new ObjectScanFragment());
+        SingleApp.setSelectedBusinessFile(SingleApp.getBusinessFilesList().businessFiles.get(position));
+        getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, new BusinessFileFragment());
     }
 
     private class BusinessItemAdapter extends ArrayAdapter<BusinessFile> {

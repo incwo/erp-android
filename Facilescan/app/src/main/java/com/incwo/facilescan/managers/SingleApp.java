@@ -53,8 +53,8 @@ public class SingleApp
 	private static int selectedNews = 0;
 	private static String selectedVideo = "";
 	private static String selectedCategorie = "";
-	private static BusinessFile selectedBusinessScanItem = null;
-	private static String selectedObjectScanItem = "";
+	private static BusinessFile mSelectedBusinessFile = null;
+	private static String mSelectedFormClassName = "";
 	
 	
 	// messages
@@ -77,20 +77,20 @@ public class SingleApp
 	// functions like "getSelected*" and "setSelected*"
 	//
 	
-	public static BusinessFile getSelectedBusinessScanItem() {
-		return selectedBusinessScanItem;
+	public static BusinessFile getSelectedBusinessFile() {
+		return mSelectedBusinessFile;
 	}
 	
-	public static void setSelectedBusinessScanItem(BusinessFile selectedBusiness) {
-		SingleApp.selectedBusinessScanItem = selectedBusiness;
+	public static void setSelectedBusinessFile(BusinessFile selectedBusiness) {
+		SingleApp.mSelectedBusinessFile = selectedBusiness;
 	}
 
-	public static String getSelectedObjectScanItem() {
-		return selectedObjectScanItem;
+	public static String getSelectedFormClassName() {
+		return mSelectedFormClassName;
 	}
 
-	public static void setSelectedObjectScanItem(String selectedObject) {
-		SingleApp.selectedObjectScanItem = selectedObject;
+	public static void setSelectedFormClassName(String className) {
+		SingleApp.mSelectedFormClassName = className;
 	}
 	
 	public static String getSelectedCategorie() {
