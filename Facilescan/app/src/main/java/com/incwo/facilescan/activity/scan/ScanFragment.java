@@ -172,7 +172,7 @@ public class ScanFragment extends BaseListFragment {
         super.onListItemClick(l, v, position, id);
 
         BusinessFile selectedBusinessFile = SingleApp.getBusinessFilesList().businessFiles.get(position);
-        FormListFragment fragment = FormListFragment.newInstance(selectedBusinessFile.id, selectedBusinessFile.getForms());
+        FormListFragment fragment = FormListFragment.newInstance(selectedBusinessFile.id, selectedBusinessFile.getChildren());
         getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, fragment);
     }
 

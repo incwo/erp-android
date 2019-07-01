@@ -7,9 +7,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
@@ -112,7 +110,7 @@ public class BusinessFileXmlParsing extends DefaultHandler {
 
 			case "folder":
 				if (parentTag.equals("business_file")) {
-					//mCurrentBusinessFile.addFolder(mCurrentFolder);
+					mCurrentBusinessFile.mChildren.add(mCurrentFolder);
 				}
 				mCurrentFolder = null;
 				break;
@@ -187,9 +185,9 @@ public class BusinessFileXmlParsing extends DefaultHandler {
 
 			case "object":
 				if (parentTag.equals("business_file")) {
-					mCurrentBusinessFile.mForms.add(mCurrentForm);
+					mCurrentBusinessFile.mChildren.add(mCurrentForm);
 				} else if (parentTag.equals("folder")) {
-					// mCurrentForm.add(mCurrentForm)
+					mCurrentFolder.addForm(mCurrentForm);
 				}
 				mCurrentForm = null;
 				break;

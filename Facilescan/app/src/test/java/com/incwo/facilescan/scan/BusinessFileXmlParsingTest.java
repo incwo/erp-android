@@ -2,7 +2,7 @@ package com.incwo.facilescan.scan;
 
 import org.junit.jupiter.api.*;
 
-import java.io.InputStream;
+import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -17,13 +17,13 @@ class BusinessFileXmlParsingTest {
         assertEquals("incwo", businessFile.name);
         assertEquals("Bureau Virtuel", businessFile.kind);
 
-        assertEquals(6, businessFile.getForms().size()); // 7 children if counting the folder
+        assertEquals(7, businessFile.getChildren().size());
     }
 
     @Test
     void parsesContactForm() throws Exception {
         BusinessFile businessFile = getFirstBusinessFile();
-        Form contactForm = businessFile.getForms().get(0);
+        Form contactForm = (Form)(businessFile.getChildren().get(0));
         assertEquals("Contact", contactForm.className);
         assertEquals("contacts", contactForm.type);
 
@@ -46,7 +46,7 @@ class BusinessFileXmlParsingTest {
     @Test
     void parsesToDoForm() throws Exception {
         BusinessFile businessFile = getFirstBusinessFile();
-        Form contactForm = businessFile.getForms().get(3);
+        Form contactForm = (Form)(businessFile.getChildren().get(3));
         assertEquals("A faire", contactForm.className);
         assertEquals("tasks", contactForm.type);
 
@@ -78,15 +78,27 @@ class BusinessFileXmlParsingTest {
     @Test
     void parsesProposalSheet() throws Exception {
         BusinessFile businessFile = getFirstBusinessFile();
-        Form form = businessFile.getForms().get(5);
-        assertEquals("Signer le BL BL1612-00224", form.className);
-        assertEquals("proposal_sheets+3003726", form.type);
+        ArrayList<Object> formsOrFolders = businessFile.getChildren();
+        Form lastForm = (Form)(formsOrFolders.get(formsOrFolders.size()-1));
+        assertEquals("Signer le BL BL1612-00224", lastForm.className);
+        assertEquals("proposal_sheets+3003726", lastForm.type);
 
-        FormField field = form.fields.get(0);
+        FormField field = lastForm.fields.get(0);
         assertEquals("Signature", field.name);
         assertEquals("my_signature", field.key);
         assertEquals("signature", field.type);
         assertEquals("Je valide la livraison BL1612-00224", field.description);
+    }
+
+    @Test
+    void parsesFormFolder() throws Exception {
+        BusinessFile businessFile = getFirstBusinessFile();
+        FormFolder folder = (FormFolder)(businessFile.getChildren().get(5));
+        assertEquals("Bons de livraison à signer", folder.getTitle());
+        assertEquals(11, folder.getForms().size());
+
+        Form form = folder.getForms().get(0);
+        assertEquals("Signer le BL BL1906-00242", form.className);
     }
 
 
