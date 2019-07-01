@@ -20,49 +20,56 @@ import com.incwo.facilescan.scan.FormField;
 import java.util.ArrayList;
 
 public class EnumFragment extends BaseListFragment {
+	private static final String ARG_FIELD = "ARG_FIELD";
 
-	private BusinessFilesList xml = null;
-	private View mRoot;
 	private ArrayList<FormField.KeyValue> mKeyValues;
-	private ArrayList<String> mTitles;
-	
+
+	public static EnumFragment newInstance(FormField enumField) {
+		Bundle args = new Bundle();
+		args.putSerializable(ARG_FIELD, enumField);
+
+		EnumFragment fragment = new EnumFragment();
+		fragment.setArguments(args);
+		return fragment;
+	}
+
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	xml = SingleApp.getBusinessFilesList();
-    	BusinessFile businessFile = SingleApp.getSelectedBusinessFile();
-    	Form objScanItem = businessFile.getFormByClassName(SingleApp.getSelectedFormClassName());
-    	mKeyValues = objScanItem.getFieldByName(getArguments().getString("fieldName")).keyValues;
+		FormField enumField = (FormField) getArguments().getSerializable(ARG_FIELD);
+		// Actually, only the keyValues are needed, not the FormField but otherwise we get an "unchecked warning" when trying to deserialize the ArrayList<KeyValue>.
+		mKeyValues = enumField.keyValues;
 
-    	EnumAdapter enumAdapter = new EnumAdapter(this.getActivity(), mTitles);
+    	EnumAdapter enumAdapter = new EnumAdapter(this.getActivity(), mKeyValues);
         setListAdapter(enumAdapter);
-		mRoot = inflater.inflate(R.layout.videos_fragment, null);
-		return mRoot;
+		View root = inflater.inflate(R.layout.videos_fragment, null);
+		return root;
 	}
     
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        SingleApp.setDataForNextFragment(mTitles.get(position));
+
+        SingleApp.setDataForNextFragment(mKeyValues.get(position).value);
         getTabActivity().popFragment();
     }
 
-    private class EnumAdapter extends ArrayAdapter<String> {
+    private class EnumAdapter extends ArrayAdapter<FormField.KeyValue> {
 		private LayoutInflater mInflater;
 
-		EnumAdapter(Activity context, ArrayList<String> arrayList) {
+		EnumAdapter(Activity context, ArrayList<FormField.KeyValue> arrayList) {
 			super(context, R.layout.object_scan_row, arrayList);
 			mInflater = LayoutInflater.from(context);
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-			String item = getItem(position);
+			FormField.KeyValue item = getItem(position);
 			
 			Row rowView = new Row();
 			convertView = mInflater.inflate(R.layout.object_scan_row, null);	
 		
 			rowView.mTitleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
 			convertView.setTag(item);
-			rowView.mTitleTextView.setText(item);
+			rowView.mTitleTextView.setText(item.value);
 			return(convertView);
 		}
 

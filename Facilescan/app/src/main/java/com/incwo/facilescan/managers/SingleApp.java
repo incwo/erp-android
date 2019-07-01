@@ -53,9 +53,6 @@ public class SingleApp
 	private static int selectedNews = 0;
 	private static String selectedVideo = "";
 	private static String selectedCategorie = "";
-	private static BusinessFile mSelectedBusinessFile = null;
-	private static String mSelectedFormClassName = "";
-	
 	
 	// messages
 	public static final int BADGE_UPDATE_MESSAGE = 1000;
@@ -76,23 +73,7 @@ public class SingleApp
 	//
 	// functions like "getSelected*" and "setSelected*"
 	//
-	
-	public static BusinessFile getSelectedBusinessFile() {
-		return mSelectedBusinessFile;
-	}
-	
-	public static void setSelectedBusinessFile(BusinessFile selectedBusiness) {
-		SingleApp.mSelectedBusinessFile = selectedBusiness;
-	}
 
-	public static String getSelectedFormClassName() {
-		return mSelectedFormClassName;
-	}
-
-	public static void setSelectedFormClassName(String className) {
-		SingleApp.mSelectedFormClassName = className;
-	}
-	
 	public static String getSelectedCategorie() {
 		return selectedCategorie;
 	}

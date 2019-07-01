@@ -20,14 +20,22 @@ import com.incwo.facilescan.scan.BusinessFilesList;
 import java.util.ArrayList;
 
 public class BusinessFileFragment extends BaseListFragment {
+	private static final String ARG_BUSINESS_FILE = "ARG_BUSINESS_FILE";
 
 	private BusinessFile mBusinessFile;
 
+	public static BusinessFileFragment newInstance(BusinessFile businessFile) {
+		Bundle args = new Bundle();
+		args.putSerializable(ARG_BUSINESS_FILE, businessFile);
+
+		BusinessFileFragment fragment = new BusinessFileFragment();
+		fragment.setArguments(args);
+		return fragment;
+	}
+
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-    	BusinessFilesList businessFilesList = SingleApp.getBusinessFilesList();
-    	mBusinessFile = SingleApp.getSelectedBusinessFile();
+    	mBusinessFile = (BusinessFile) getArguments().getSerializable(ARG_BUSINESS_FILE);
     	
         BusinessFileAdapter businessFileAdapter = new BusinessFileAdapter(this.getActivity(), mBusinessFile.getFormClassNames());
         setListAdapter(businessFileAdapter);
@@ -39,9 +47,9 @@ public class BusinessFileFragment extends BaseListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         Form form = mBusinessFile.getForms().get(position);
-        SingleApp.setSelectedFormClassName(form.className);
-        
-        getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, new FormFragment());
+
+        FormFragment formFragment = FormFragment.newInstance(mBusinessFile.id, form);
+        getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, formFragment);
     }
     
     private class BusinessFileAdapter extends ArrayAdapter<String> {

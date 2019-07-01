@@ -170,8 +170,9 @@ public class ScanFragment extends BaseListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        SingleApp.setSelectedBusinessFile(SingleApp.getBusinessFilesList().businessFiles.get(position));
-        getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, new BusinessFileFragment());
+
+        BusinessFile selectedBusinessFile = SingleApp.getBusinessFilesList().businessFiles.get(position);
+        getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, BusinessFileFragment.newInstance(selectedBusinessFile));
     }
 
     private class BusinessItemAdapter extends ArrayAdapter<BusinessFile> {

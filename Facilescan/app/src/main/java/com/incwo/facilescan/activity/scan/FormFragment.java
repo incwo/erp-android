@@ -40,11 +40,14 @@ import java.util.Random;
 
 /** A fragment to present the content of a Form. */
 public class FormFragment extends TabFragment {
+    private static final String ARG_BUSINESS_FILE_ID = "ARG_BUSINESS_FILE_ID";
+    private static final String ARG_FORM = "ARG_FORM";
     private static int PICK_PHOTO_REQUEST = 11;
 
     private static final String FILE_PROVIDER_AUTHORITY = "com.incwo.facilescan.fileprovider";
 
     private View mRoot;
+    private String mBusinessFileId;
     private Form mForm;
     private FormField lastClickedField = null;
     private AsyncTask<?, ?, ?> SendTask = null;
@@ -57,13 +60,22 @@ public class FormFragment extends TabFragment {
     private LinearLayout mLoadingLayout = null;
     private ImageView mPhotoImageView = null;
 
+    public static FormFragment newInstance(String businessFileId, Form form) {
+        Bundle args = new Bundle();
+        args.putString(ARG_BUSINESS_FILE_ID, businessFileId);
+        args.putSerializable(ARG_FORM, form);
+
+        FormFragment fragment = new FormFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        BusinessFilesList businessFilesList = SingleApp.getBusinessFilesList();
-        BusinessFile selectedBusiness = SingleApp.getSelectedBusinessFile();
-        mForm = selectedBusiness.getFormByClassName(SingleApp.getSelectedFormClassName());
+        mBusinessFileId = getArguments().getString(ARG_BUSINESS_FILE_ID);
+        mForm = (Form) getArguments().getSerializable(ARG_FORM);
 
         handleReturnOfPreviousFragment();
     }
@@ -307,12 +319,7 @@ public class FormFragment extends TabFragment {
                 return;
             }
 
-            // and send it to the next fragment
-            Fragment frag = new EnumFragment();
-            Bundle args = new Bundle();
-            args.putString("fieldName", lastClickedField.name);
-            frag.setArguments(args);
-
+            EnumFragment frag = EnumFragment.newInstance(lastClickedField);
             getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, frag);
         }
     };
@@ -329,9 +336,8 @@ public class FormFragment extends TabFragment {
 
     private View.OnClickListener mSignClickListener = new View.OnClickListener() {
         public void onClick(View view) {
-            Fragment frag = new SignatureCanvasFragment();
-
-            getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, frag);
+            Fragment fragment = SignatureCanvasFragment.newInstance(mForm);
+            getTabActivity().pushFragment(BaseTabActivity.TAB_SCAN, fragment);
         }
     };
 
@@ -364,11 +370,10 @@ public class FormFragment extends TabFragment {
 
             WebService ws = new WebService();
 
-            BusinessFile businessFile = SingleApp.getSelectedBusinessFile();
             if (mIsPhotoTaken)
-                ws.uploadForm(businessFile.id, mForm, mBitmap);
+                ws.uploadForm(mBusinessFileId, mForm, mBitmap);
             else
-                ws.uploadForm(businessFile.id, mForm, null);
+                ws.uploadForm(mBusinessFileId, mForm, null);
 
             return (long) ws.responseCode;
         }

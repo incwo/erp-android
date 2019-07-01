@@ -1,8 +1,9 @@
 package com.incwo.facilescan.scan;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Form {
+public class Form implements Serializable {
 	public String className;
 	public String type;
 	public ArrayList<FormField> fields;

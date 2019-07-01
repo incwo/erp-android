@@ -20,45 +20,47 @@ import com.incwo.facilescan.scan.BusinessFilesList;
 import java.util.Calendar;
 
 public class SignatureCanvasFragment extends TabFragment {
+	private static final String ARG_FORM = "ARG_FORM";
 
+	private DrawView drawView;
+	private View screenshot = null;
 	
-	 private View mRoot;
-	 private DrawView drawView;
-	 private Form selectedItem;
-	 private BusinessFilesList xml = null;
-	 private View screenshot = null;
-	
-	
+	public static SignatureCanvasFragment newInstance(Form form) {
+		Bundle args = new Bundle();
+		args.putSerializable(ARG_FORM, form);
+
+		SignatureCanvasFragment fragment = new SignatureCanvasFragment();
+		fragment.setArguments(args);
+		return fragment;
+	}
+
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		Form form = (Form) getArguments().getSerializable(ARG_FORM);
 
-    	mRoot = inflater.inflate(R.layout.signature_canvas, null);
+    	View root = inflater.inflate(R.layout.signature_canvas, null);
     	
     	// this prevent previous fragment to catch onTouch event
-    	mRoot.setOnTouchListener(new View.OnTouchListener() {
+    	root.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 return true;
             }
         });
     	
-    	
-    	
-    	drawView = (DrawView) mRoot.findViewById(R.id.sign_view);
+
+    	drawView = (DrawView) root.findViewById(R.id.sign_view);
     	drawView.requestFocus();
-    	TextView your_signature = (TextView) mRoot.findViewById(R.id.your_signature);
+    	TextView your_signature = (TextView) root.findViewById(R.id.your_signature);
     	your_signature.setText(R.string.your_signature);
+
+    	TextView title = (TextView) root.findViewById(R.id.signature_title);
+    	if(form.fields.get(0).getDescription() != null)
+    		title.setText(form.fields.get(0).getDescription());
     	
-    	xml = SingleApp.getBusinessFilesList();
-    	BusinessFile businessFile = SingleApp.getSelectedBusinessFile();
-    	selectedItem = businessFile.getFormByClassName(SingleApp.getSelectedFormClassName());
-    	
-    	TextView title = (TextView) mRoot.findViewById(R.id.signature_title);
-    	if(selectedItem.fields.get(0).getDescription() != null)
-    		title.setText(selectedItem.fields.get(0).getDescription());
-    	
-    	TextView clear = (TextView) mRoot.findViewById(R.id.CLEAR);
-    	TextView save = (TextView) mRoot.findViewById(R.id.SAVE);
-    	TextView date = (TextView) mRoot.findViewById(R.id.date_label);
+    	TextView clear = (TextView) root.findViewById(R.id.CLEAR);
+    	TextView save = (TextView) root.findViewById(R.id.SAVE);
+    	TextView date = (TextView) root.findViewById(R.id.date_label);
     	
     	Calendar c = Calendar.getInstance(); 
     	String dateTemp = DateUtils.formatDateTime(FacilescanApp.getInstance().getApplicationContext(), c.getTimeInMillis(), DateUtils.FORMAT_SHOW_YEAR).toString();
@@ -71,10 +73,10 @@ public class SignatureCanvasFragment extends TabFragment {
     	clear.setOnClickListener(mClearListener);
     	save.setOnClickListener(mSaveSignatureListener);
     	
-    	screenshot = mRoot.findViewById(R.id.screenshot);
+    	screenshot = root.findViewById(R.id.screenshot);
     	screenshot.setDrawingCacheEnabled(true);
     	
-    	return mRoot;
+    	return root;
 	}
 	
 	 private View.OnClickListener mClearListener = new View.OnClickListener() {

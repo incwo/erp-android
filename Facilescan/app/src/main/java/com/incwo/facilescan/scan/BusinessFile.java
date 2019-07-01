@@ -1,8 +1,9 @@
 package com.incwo.facilescan.scan;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BusinessFile {
+public class BusinessFile implements Serializable {
 	public String id;
 	public String name;
 	public String kind;

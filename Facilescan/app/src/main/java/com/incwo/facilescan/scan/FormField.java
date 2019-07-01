@@ -2,12 +2,13 @@ package com.incwo.facilescan.scan;
 
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FormField {
-	static public class KeyValue {
+public class FormField implements Serializable {
+	static public class KeyValue implements Serializable {
 		public String key;
 		public String value;
 		KeyValue(String key, String value) {
