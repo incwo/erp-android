@@ -413,7 +413,7 @@ public class WebService {
                     SingleApp.clearSignature();
                 }
             } else {
-                String tags = "<" + field.key + ">" + field.valueHolder.getText() + "</" + field.key + ">";
+                String tags = "<" + field.key + ">" + field.textView.getText() + "</" + field.key + ">";
                 sb.append(tags);
             }
         }

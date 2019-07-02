@@ -25,10 +25,10 @@ public class FormField implements Serializable {
 	public String description;
 
 	// This is terrible. The TextView which holds the value (typed by the user or chosen from an enum)
-	// is stored here *in the Model* and the WebService calls valueHolder.getText().
+	// is stored here *in the Model* and the WebService calls textView.getText().
 	// One could think it could simply be replaced by the savedValue, but it is not so simple: there
 	// has to be a moment when the content of the textView is saved to the savedValue.
-	public TextView valueHolder;
+	public TextView textView;
 	public String savedValue; // To save the value while the fragment's views are destroyed.
 
 	

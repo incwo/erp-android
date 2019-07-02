@@ -27,10 +27,8 @@ import com.incwo.facilescan.helpers.fragments.TabFragment;
 import com.incwo.facilescan.activity.application.BaseTabActivity;
 import com.incwo.facilescan.managers.SingleApp;
 import com.incwo.facilescan.managers.WebService;
-import com.incwo.facilescan.scan.BusinessFile;
 import com.incwo.facilescan.scan.FormField;
 import com.incwo.facilescan.scan.Form;
-import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.io.File;
 import java.io.InputStream;
@@ -94,9 +92,9 @@ public class FormFragment extends TabFragment {
 
         // Save the contents of the text views into the fields
         for(FormField field: mForm.fields) {
-            TextView valueHolder = field.valueHolder;
-            if(valueHolder != null) { // e.g.: null for Signature fields
-                field.savedValue = field.valueHolder.getText().toString();
+            TextView textView = field.textView;
+            if(textView != null) { // e.g.: null for Signature fields
+                field.savedValue = field.textView.getText().toString();
             }
         }
     }
@@ -178,7 +176,7 @@ public class FormFragment extends TabFragment {
         TextView valueTextView = (TextView) v.findViewById(R.id.valueHolder);
         valueTextView.setId(makeRandomId());
         valueTextView.setOnClickListener(enumOnClickListener);
-        field.valueHolder = valueTextView;
+        field.textView = valueTextView;
         valueTextView.setText(field.savedValue);
 
         return v;
@@ -193,7 +191,7 @@ public class FormFragment extends TabFragment {
 
         TextView valueTextView = (TextView) v.findViewById(R.id.valueHolder);
         valueTextView.setId(makeRandomId());
-        field.valueHolder = valueTextView;
+        field.textView = valueTextView;
         valueTextView.setText(field.savedValue);
 
         return v;
@@ -314,7 +312,7 @@ public class FormFragment extends TabFragment {
 
     private View.OnClickListener enumOnClickListener = new View.OnClickListener() {
         public void onClick(View view) {
-            lastClickedField = findFieldForValueHolder(view);
+            lastClickedField = findFieldForValueTextView(view);
             if(lastClickedField == null) {
                 return;
             }
@@ -325,9 +323,9 @@ public class FormFragment extends TabFragment {
     };
 
     @Nullable
-    private FormField findFieldForValueHolder(View valueHolder) {
+    private FormField findFieldForValueTextView(View textView) {
         for(FormField field: mForm.fields) {
-            if(field.valueHolder.getId() == valueHolder.getId()) {
+            if(field.textView.getId() == textView.getId()) {
                 return field;
             }
         }
