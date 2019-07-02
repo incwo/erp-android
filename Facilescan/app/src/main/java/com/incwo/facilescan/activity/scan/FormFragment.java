@@ -33,6 +33,7 @@ import com.incwo.facilescan.scan.Form;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -47,6 +48,7 @@ public class FormFragment extends TabFragment {
     private View mRoot;
     private String mBusinessFileId;
     private Form mForm;
+    private HashMap<String, TextView> mTextViewByFieldKey;
     private FormField lastClickedField = null;
     private AsyncTask<?, ?, ?> SendTask = null;
     private boolean mIsPhotoTaken = false;
@@ -74,6 +76,7 @@ public class FormFragment extends TabFragment {
 
         mBusinessFileId = getArguments().getString(ARG_BUSINESS_FILE_ID);
         mForm = (Form) getArguments().getSerializable(ARG_FORM);
+        mTextViewByFieldKey = new HashMap<>();
 
         handleReturnOfPreviousFragment();
     }
@@ -86,15 +89,16 @@ public class FormFragment extends TabFragment {
 
     }
 
+
     @Override
     public void onStop() {
         super.onStop();
 
         // Save the contents of the text views into the fields
         for(FormField field: mForm.fields) {
-            TextView textView = field.textView;
+            TextView textView = getTextViewForField(field);
             if(textView != null) { // e.g.: null for Signature fields
-                field.savedValue = field.textView.getText().toString();
+                field.savedValue = textView.getText().toString();
             }
         }
     }
@@ -176,7 +180,7 @@ public class FormFragment extends TabFragment {
         TextView valueTextView = (TextView) v.findViewById(R.id.valueHolder);
         valueTextView.setId(makeRandomId());
         valueTextView.setOnClickListener(enumOnClickListener);
-        field.textView = valueTextView;
+        associateTextViewWithField(valueTextView, field);
         valueTextView.setText(field.savedValue);
 
         return v;
@@ -191,7 +195,7 @@ public class FormFragment extends TabFragment {
 
         TextView valueTextView = (TextView) v.findViewById(R.id.valueHolder);
         valueTextView.setId(makeRandomId());
-        field.textView = valueTextView;
+        associateTextViewWithField(valueTextView, field);
         valueTextView.setText(field.savedValue);
 
         return v;
@@ -322,10 +326,21 @@ public class FormFragment extends TabFragment {
         }
     };
 
+    private TextView getTextViewForField(FormField field) {
+        return mTextViewByFieldKey.get(field.key);
+    }
+
+    private void associateTextViewWithField(TextView textView, FormField field) {
+        mTextViewByFieldKey.put(field.key, textView);
+    }
+
+
     @Nullable
     private FormField findFieldForValueTextView(View textView) {
         for(FormField field: mForm.fields) {
-            if(field.textView.getId() == textView.getId()) {
+            TextView fieldTextView = getTextViewForField(field);
+            //if(fieldTextView.getId() == textView.getId()) {
+            if(fieldTextView == textView) {
                 return field;
             }
         }

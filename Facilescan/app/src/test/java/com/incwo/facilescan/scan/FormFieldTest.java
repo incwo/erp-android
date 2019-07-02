@@ -14,7 +14,6 @@ class FormFieldTest {
         field.name = "TestName";
         field.key = "TestKey";
         field.type = "TestType";
-        field.classValue = "TestClassValue";
         ArrayList<FormField.KeyValue> keyValues = new ArrayList<>();
         keyValues.add(new FormField.KeyValue("TestKey", "TestValue"));
         field.keyValues = keyValues;
