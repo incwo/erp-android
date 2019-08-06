@@ -159,7 +159,7 @@ public class WebService {
             //
             // random avoid caching issue
             Random rand = new Random();
-            String remoteUrl = SingleApp.getBaseURL() + SingleApp.SCAN_URL + rand.nextInt();
+            String remoteUrl = SingleApp.getBaseURL() + SingleApp.SCAN_URL + rand.nextInt() + "&hierarchical=1";
 
             URL tmpURL = new URL(remoteUrl);
             HttpURLConnection tmpConnection = null;
@@ -289,7 +289,7 @@ public class WebService {
     public void logToScan(String username, String password) {
         // random avoid caching issue
         Random rand = new Random();
-        String remoteUrl = SingleApp.getBaseURL() + SingleApp.SCAN_URL + rand.nextInt();
+        String remoteUrl = SingleApp.getBaseURL() + SingleApp.SCAN_URL + rand.nextInt() + "&hierarchical=1";
 
         HttpURLConnection httpURLConnection = null;
         try {
