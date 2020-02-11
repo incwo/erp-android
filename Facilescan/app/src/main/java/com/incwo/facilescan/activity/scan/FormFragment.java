@@ -95,10 +95,13 @@ public class FormFragment extends TabFragment {
         super.onStop();
 
         // Save the contents of the text views into the fields
+        // Note that this method is also called when picking the value for an enum.
+        // The values of "string" field is lost if we don't read them.
         for(FormField field: mForm.fields) {
             TextView textView = getTextViewForField(field);
-            if(textView != null) { // e.g.: null for Signature fields
-                field.savedValue = textView.getText().toString();
+            if(textView != null // e.g.: null for Signature fields
+                    && !field.type.equals("enum")) { // The savedValue of an enum is its key. Don't replace it with its value.
+                    field.savedValue = textView.getText().toString();
             }
         }
     }
@@ -181,7 +184,9 @@ public class FormFragment extends TabFragment {
         valueTextView.setId(makeRandomId());
         valueTextView.setOnClickListener(enumOnClickListener);
         associateTextViewWithField(valueTextView, field);
-        valueTextView.setText(field.savedValue);
+        String enumKey = field.savedValue;
+        String enumText = field.getValueForKey(enumKey);
+        valueTextView.setText(enumText);
 
         return v;
     }

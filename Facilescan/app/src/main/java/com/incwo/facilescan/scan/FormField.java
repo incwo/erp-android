@@ -55,6 +55,16 @@ public class FormField implements Serializable {
 		keyValues.add(keyValue);
 	}
 
+	public String getValueForKey(String key) {
+		for(KeyValue keyValue: keyValues) {
+			if(keyValue.key.equals(key)) {
+				return keyValue.value;
+			}
+		}
+
+		return null; // No match
+	}
+
 	public String getDescription() {
 		return description;
 	}

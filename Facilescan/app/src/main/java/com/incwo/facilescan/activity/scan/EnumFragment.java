@@ -49,7 +49,8 @@ public class EnumFragment extends BaseListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        SingleApp.setDataForNextFragment(mKeyValues.get(position).value);
+        // Save the key, not the value
+        SingleApp.setDataForNextFragment(mKeyValues.get(position).key);
         getTabActivity().popFragment();
     }
 
