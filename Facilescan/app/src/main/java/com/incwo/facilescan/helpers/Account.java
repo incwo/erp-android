@@ -5,52 +5,15 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
 
-public class Customer {
+public class Account {
 	private final Object lock = new Object();
 
 	public String username;
 	public String password;
 
-	public Customer() {
+	public Account() {
 		username = "";
 		password = "";
-	}
-
-	public void load(String filename) {
-		synchronized (lock) {
-			try {
-				FileInputStream fileInputStream = new FileInputStream(new File(filename));
-				byte [] buffer = new byte[fileInputStream.available()];
-				while (fileInputStream.read(buffer) != -1);
-				fileInputStream.close();
-				String jsonContent = new String(buffer);
-				processJsonContent(jsonContent);
-			} 
-			catch (Exception e) {
-				e.toString();
-			}
-		}
-	}
-
-	public void processJsonContent(String jsonContent) {
-//			try {
-//				JSONObject object = new JSONObject(jsonContent);
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			}
-	}
-
-	public String getJsonRegister() {
-		try {
-			JSONObject object = new JSONObject();
-			object.put("username", username);
-			object.put("password", password);
-			return object.toString();
-		}
-		catch (Exception e) {
-			e.toString();
-		}
-		return "";
 	}
 
 	public boolean isAuthorizationTokenValid() {
