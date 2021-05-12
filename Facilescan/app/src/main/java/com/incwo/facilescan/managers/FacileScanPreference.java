@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.incwo.facilescan.app.FacilescanApp;
+import com.incwo.facilescan.helpers.Account;
 import com.incwo.facilescan.helpers.EncryptHelper;
 
 import java.io.File;
@@ -20,8 +21,7 @@ import java.util.ArrayList;
 public class FacileScanPreference {
 	private final Object lock = new Object();
 
-	public String username;
-	public String password;
+	public Account mAccount = null;
 	
 	public String news_xml;
 	public String scans_xml;
@@ -33,8 +33,6 @@ public class FacileScanPreference {
 	private static final String FacileScanPreferencesFile = "FacileScanPreferencesFile";
 	
 	FacileScanPreference(){
-		username = "";
-		password = "";
 		news_xml = "";
 		videos_xml = "";
 		session = "";
@@ -42,25 +40,26 @@ public class FacileScanPreference {
 	}
 	
 	private SharedPreferences getSharedPreferences() {
-		//SharedPreferences sharedPreferences = AutolibApp.getInstance().getApplicationContext().getSharedPreferences(SingleApp.getApplicationName(), Context.MODE_PRIVATE);
-		//sharedPreferences = PreferenceManager.getDefaultSharedPreferences(AutolibApp.getInstance().getApplicationContext());
-		SharedPreferences sharedPreferences = FacilescanApp.getInstance().getApplicationContext().getSharedPreferences(FacileScanPreferencesFile, Context.MODE_PRIVATE);
-		return sharedPreferences;
+		return FacilescanApp.getInstance().getApplicationContext().getSharedPreferences(FacileScanPreferencesFile, Context.MODE_PRIVATE);
 	}
-	
+
+	public Account getAccount() {
+		return mAccount;
+	}
+
 	public void loadCustomer(){
 		synchronized (lock) {
 			SharedPreferences sharedPreferences = getSharedPreferences();
 			EncryptHelper encryptHelper = new EncryptHelper();
 			try {
-				username = sharedPreferences.getString("username", "");
+				String username = sharedPreferences.getString("username", "");
 				username = (new String(encryptHelper.decrypt(username))).trim();
-				password = sharedPreferences.getString("password", "");
+				String password = sharedPreferences.getString("password", "");
 				password = (new String(encryptHelper.decrypt(password))).trim();
+				mAccount = new Account(username, password);
 			} catch (Exception e) {
 				e.toString();
-				username = "";
-				password = "";
+				mAccount = null;
 			}
 
 		}
@@ -72,12 +71,10 @@ public class FacileScanPreference {
 			SharedPreferences.Editor editor = sharedPreferences.edit();
 			EncryptHelper encryptHelper = new EncryptHelper();
 			try {
-				editor.putString("username", EncryptHelper.bytesToHex(encryptHelper.encrypt(username)));
-				editor.putString("password", EncryptHelper.bytesToHex(encryptHelper.encrypt(password)));
+				editor.putString("username", EncryptHelper.bytesToHex(encryptHelper.encrypt(mAccount.getUsername())));
+				editor.putString("password", EncryptHelper.bytesToHex(encryptHelper.encrypt(mAccount.getPassword())));
 			} catch (Exception e) {
 				e.toString();
-				editor.putString("username", "");
-				editor.putString("password", "");
 			}
 			editor.commit();
 		}
@@ -198,7 +195,7 @@ public class FacileScanPreference {
 		String filename = url.substring(26);
 		String appPath = FacilescanApp.getInstance().getApplicationContext().getFilesDir().getAbsolutePath();
 	    File f = new File(appPath, filename);
-        if (f.exists() == false)
+        if (!f.exists())
         	return null;
 	    FileInputStream fis = null;
 	    try {
@@ -207,8 +204,7 @@ public class FacileScanPreference {
 	        // TODO Auto-generated catch block
 	        e.printStackTrace();
 	    }
-	    Bitmap bitmap = BitmapFactory.decodeStream(fis);
-	    return bitmap;
+		return BitmapFactory.decodeStream(fis);
 	}
 	
 }
