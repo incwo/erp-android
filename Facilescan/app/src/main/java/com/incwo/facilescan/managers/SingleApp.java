@@ -10,6 +10,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.webkit.CookieManager;
 
+import androidx.annotation.Nullable;
+
 import com.incwo.facilescan.app.FacilescanApp;
 import com.incwo.facilescan.helpers.Account;
 import com.incwo.facilescan.helpers.Base64;
@@ -182,10 +184,11 @@ public class SingleApp
 	{
 		pref.loadAccount();
 	}
-	
-	public static String getAutorizationToken()
+
+	@Nullable
+	public static String getAuthorizationToken()
 	{
-		return getAutorizationToken(pref.account.getUsername(), pref.account.getPassword());
+		return pref.account.getAuthorizationToken();
 	}
 	
 	public static String getBaseURL()
@@ -203,12 +206,6 @@ public class SingleApp
 //		else
 //			return "www.incwo.com";
 		return getBaseURL();
-	}
-
-	public static String getAutorizationToken(String username, String password)
-	{
-		String token = username + ":" + password;
-		return "Basic " + Base64.encodeBytes(token.getBytes());
 	}
 	
 	public static boolean isNetworkAvailable() {

@@ -82,8 +82,8 @@ public class WebService {
             httpURLConnection.setRequestProperty("Content-Type", contentType);
             if (token != null)
                 httpURLConnection.setRequestProperty("Authorization", token);
-            else if (SingleApp.getAutorizationToken() != null)
-                httpURLConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken());
+            else if (SingleApp.getAuthorizationToken() != null)
+                httpURLConnection.setRequestProperty("Authorization", SingleApp.getAuthorizationToken());
             httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
 
 
@@ -144,7 +144,7 @@ public class WebService {
                 tmpConnection.setRequestProperty("Accept-Language", "fr");
                 tmpConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
                 tmpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-                tmpConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken(account.getUsername(), account.getPassword()));
+                tmpConnection.setRequestProperty("Authorization", SingleApp.getAccount().getAuthorizationToken());
                 tmpConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
                 tmpConnection.setInstanceFollowRedirects(true);
                 tmpConnection.connect();
@@ -173,7 +173,7 @@ public class WebService {
             tmpConnection.setRequestProperty("Accept-Language", "fr");
             tmpConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
             tmpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-            tmpConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken(account.getUsername(), account.getPassword()));
+            tmpConnection.setRequestProperty("Authorization", SingleApp.getAccount().getAuthorizationToken());
             tmpConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
 
             // here is the trick with the exception
@@ -244,7 +244,7 @@ public class WebService {
             httpURLConnection.setRequestProperty("Accept-Language", "fr");
             httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
             httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-            httpURLConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken(account.getUsername(), account.getPassword()));
+            httpURLConnection.setRequestProperty("Authorization", SingleApp.getAccount().getAuthorizationToken());
             httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
 
             httpURLConnection = tryConnectToFacileAndManageCookies(httpURLConnection, url, account);
@@ -304,7 +304,7 @@ public class WebService {
             httpURLConnection.setRequestProperty("Accept-Language", "fr");
             httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
             httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-            httpURLConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken(username, password));
+            httpURLConnection.setRequestProperty("Authorization", SingleApp.getAccount().getAuthorizationToken());
             httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
 
             httpURLConnection.connect();
@@ -463,7 +463,7 @@ public class WebService {
         httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
         httpURLConnection.setRequestProperty("Content-Length", String.valueOf(contentLength));
         httpURLConnection.setRequestProperty("Content-Type", "application/xml");
-        httpURLConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken());
+        httpURLConnection.setRequestProperty("Authorization", SingleApp.getAuthorizationToken());
         httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
     }
 

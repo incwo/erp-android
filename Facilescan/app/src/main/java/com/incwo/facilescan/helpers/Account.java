@@ -1,14 +1,9 @@
 package com.incwo.facilescan.helpers;
 
-import org.json.JSONObject;
+import androidx.annotation.Nullable;
 
-import java.io.File;
-import java.io.FileInputStream;
 
 public class Account {
-	private final Object lock = new Object();
-
-
 	public Account(String username, String password) {
 		mUsername = username;
 		mPassword = password;
@@ -25,20 +20,16 @@ public class Account {
 		return mPassword;
 	}
 
-	public boolean isAuthorizationTokenValid() {
-		return (mUsername.length() > 0 && mPassword.length() > 0);
-	}
-
+	@Nullable
 	public String getAuthorizationToken() {
 		try {
 			String token = mUsername + ":" + mPassword;
 			String token64 = Base64.encodeBytes(token.getBytes());
-			return "Basic <" + token64 + ">";
+			return "Basic " + token64;
 		} catch (Exception e) {
 			e.toString();
+			return null;
 		}
-		return "";
 	}
-
 }
 
