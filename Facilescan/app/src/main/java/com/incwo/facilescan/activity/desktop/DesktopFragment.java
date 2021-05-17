@@ -335,7 +335,7 @@ public class DesktopFragment extends TabFragment {
         }
         if (SingleApp.isLoggedIn()) {
             mViewFlipper.setDisplayedChild(LOGGED_IN);
-            logToDesktop = new AsyncTaskLogToDesktop(SingleApp.getUsername(), SingleApp.getPassword()).execute();
+            logToDesktop = new AsyncTaskLogToDesktop(SingleApp.getAccount().getUsername(), SingleApp.getAccount().getPassword()).execute();
 
         }
     }
@@ -348,7 +348,7 @@ public class DesktopFragment extends TabFragment {
         if (SingleApp.isLoggedIn()) {
             mViewFlipper.setDisplayedChild(LOGGED_IN);
             if (mIsFirstLoad)
-                logToDesktop = new AsyncTaskLogToDesktop(SingleApp.getUsername(), SingleApp.getPassword()).execute();
+                logToDesktop = new AsyncTaskLogToDesktop(SingleApp.getAccount().getUsername(), SingleApp.getAccount().getPassword()).execute();
 
         } else {
             mViewFlipper.setDisplayedChild(FORM);

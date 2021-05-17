@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.incwo.facilescan.BuildConfig;
 import com.incwo.facilescan.R;
+import com.incwo.facilescan.helpers.Account;
 import com.incwo.facilescan.helpers.Base64;
 import com.incwo.facilescan.scan.FormField;
 import com.incwo.facilescan.scan.Form;
@@ -188,7 +189,7 @@ public class WebService {
 
 
             // if we reach this line, password and username are good --> we can save.
-            SingleApp.saveUsernameAndPassword(username, password);
+            SingleApp.saveAccount(new Account(username, password));
 
             // open new connection (for the real request this time)
 //            httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -312,8 +313,8 @@ public class WebService {
             headersFields = httpURLConnection.getHeaderFields();
 
             if (responseCode >= 200 && responseCode < 300) {
-                if (SingleApp.getUsername().equals(username) == false || SingleApp.getPassword().equals(password) == false) {
-                    SingleApp.saveUsernameAndPassword(username, password);
+                if (SingleApp.getAccount().getUsername().equals(username) == false || SingleApp.getAccount().getPassword().equals(password) == false) {
+                    SingleApp.saveAccount(new Account(username, password));
                 }
                 InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(), inputStreamFormat);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);

@@ -97,7 +97,7 @@ public class BaseTabActivity extends AppCompatActivity {
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);
         SingleApp.loadSessionId();
-        SingleApp.loadUsernameAndPassword();
+        SingleApp.loadAccount();
         CookieSyncManager.getInstance().startSync();
     }
 

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class FacileScanPreference {
 	private final Object lock = new Object();
 
-	public Account mAccount = null;
+	public Account account = null;
 	
 	public String news_xml;
 	public String scans_xml;
@@ -43,11 +43,7 @@ public class FacileScanPreference {
 		return FacilescanApp.getInstance().getApplicationContext().getSharedPreferences(FacileScanPreferencesFile, Context.MODE_PRIVATE);
 	}
 
-	public Account getAccount() {
-		return mAccount;
-	}
-
-	public void loadCustomer(){
+	public void loadAccount() {
 		synchronized (lock) {
 			SharedPreferences sharedPreferences = getSharedPreferences();
 			EncryptHelper encryptHelper = new EncryptHelper();
@@ -56,23 +52,23 @@ public class FacileScanPreference {
 				username = (new String(encryptHelper.decrypt(username))).trim();
 				String password = sharedPreferences.getString("password", "");
 				password = (new String(encryptHelper.decrypt(password))).trim();
-				mAccount = new Account(username, password);
+				account = new Account(username, password);
 			} catch (Exception e) {
 				e.toString();
-				mAccount = null;
+				account = null;
 			}
 
 		}
 	}
 	
-	public void saveCustomer() {
+	public void saveAccount() {
 		synchronized (lock) {
 			SharedPreferences sharedPreferences = getSharedPreferences();
 			SharedPreferences.Editor editor = sharedPreferences.edit();
 			EncryptHelper encryptHelper = new EncryptHelper();
 			try {
-				editor.putString("username", EncryptHelper.bytesToHex(encryptHelper.encrypt(mAccount.getUsername())));
-				editor.putString("password", EncryptHelper.bytesToHex(encryptHelper.encrypt(mAccount.getPassword())));
+				editor.putString("username", EncryptHelper.bytesToHex(encryptHelper.encrypt(account.getUsername())));
+				editor.putString("password", EncryptHelper.bytesToHex(encryptHelper.encrypt(account.getPassword())));
 			} catch (Exception e) {
 				e.toString();
 			}

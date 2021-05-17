@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.incwo.facilescan.R;
+import com.incwo.facilescan.helpers.Account;
 import com.incwo.facilescan.helpers.fragments.BaseListFragment;
 import com.incwo.facilescan.activity.application.BaseTabActivity;
 import com.incwo.facilescan.managers.SingleApp;
@@ -109,7 +110,7 @@ public class ScanFragment extends BaseListFragment {
     }
 
     private void fetch() {
-        mBusinessFilesFetch = new BusinessFilesFetch(SingleApp.getUsername(), SingleApp.getPassword());
+        mBusinessFilesFetch = new BusinessFilesFetch(SingleApp.getAccount().getUsername(), SingleApp.getAccount().getPassword());
         viewFlipper.setDisplayedChild(LOADING_FLIPPER_INDEX);
         mBusinessFilesFetch.fetch(new BusinessFilesFetch.Listener() {
             @Override
@@ -235,7 +236,7 @@ public class ScanFragment extends BaseListFragment {
             EditText passwordEditText = (EditText) mRoot.findViewById(R.id.edit_password);
             String password = passwordEditText.getText().toString();
 
-            SingleApp.saveUsernameAndPassword(username, password);
+            SingleApp.saveAccount(new Account(username, password));
             SingleApp.setLoggedIn(true);
             firstLoad = true;
             checkLogin();

@@ -11,11 +11,11 @@ import android.net.Uri;
 import android.webkit.CookieManager;
 
 import com.incwo.facilescan.app.FacilescanApp;
+import com.incwo.facilescan.helpers.Account;
 import com.incwo.facilescan.helpers.Base64;
 import com.incwo.facilescan.helpers.rss.Rss;
 import com.incwo.facilescan.helpers.rss.RssItem;
 import com.incwo.facilescan.helpers.videos.VideoXml;
-import com.incwo.facilescan.scan.BusinessFile;
 import com.incwo.facilescan.scan.BusinessFilesList;
 
 import java.lang.reflect.Method;
@@ -36,7 +36,7 @@ public class SingleApp
 	public final static String  UPLOAD_SCAN_URL = "/upload_files.xml";
 	
 	private final static boolean mIsDevServer = false;
-	
+
 	private static boolean mIsLoggedIn = false;
 
 	// datas
@@ -163,36 +163,29 @@ public class SingleApp
 			CookieManager.getInstance().setCookie(SingleApp.getBaseURLForCookie(), "");
 		}
 		CookieManager.getInstance().removeSessionCookie();
-		SingleApp.saveUsernameAndPassword("", "");
+		SingleApp.saveAccount(null);
 		SingleApp.setSessionId("");
 		SingleApp.setLoggedIn(false);
 	}
-	
-	public static String getUsername()
-	{
-		return (pref.username);
-	}
-	
-	public static String getPassword()
-	{
-		return (pref.password);
+
+	public static Account getAccount() {
+		return pref.account;
 	}
 
-	public static void saveUsernameAndPassword(String username, String password)
+	public static void saveAccount(Account account)
 	{
-		pref.username = username;
-		pref.password = password;
-		pref.saveCustomer();
+		pref.account = account;
+		pref.saveAccount();
 	}
 	
-	public static void loadUsernameAndPassword()
+	public static void loadAccount()
 	{
-		pref.loadCustomer();
+		pref.loadAccount();
 	}
 	
 	public static String getAutorizationToken()
 	{
-		return getAutorizationToken(pref.username, pref.password);
+		return getAutorizationToken(pref.account.getUsername(), pref.account.getPassword());
 	}
 	
 	public static String getBaseURL()
@@ -279,7 +272,7 @@ public class SingleApp
 		loadSessionId();
 		loadNewsRss();
 		loadVideosXml();
-		loadUsernameAndPassword();
+		loadAccount();
 	}
 	
 	public static void setSessionId(String id){
