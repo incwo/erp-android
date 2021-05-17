@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 
 import com.incwo.facilescan.app.FacilescanApp;
 import com.incwo.facilescan.helpers.Account;
-import com.incwo.facilescan.helpers.Base64;
 import com.incwo.facilescan.helpers.rss.Rss;
 import com.incwo.facilescan.helpers.rss.RssItem;
 import com.incwo.facilescan.helpers.videos.VideoXml;
@@ -27,17 +26,6 @@ import java.util.HashMap;
 public class SingleApp
 {
 	public final static long 	SPLASH_SCREEN_DURATION = 1000;
-	public final static String  NEWS_RSS_URL = "https://blog.incwo.com/xml/rss20/feed.xml?show_extended=1";
-	public final static String  VIDEOS_RSS_URL = "http://www.incwo.com/videos/trainings.xml";
-	public final static String  FACILE_BASEURL = "https://www.incwo.com";
-	public final static String  FACILE_BASEURL_DEV = "http://dev.incwo.com";
-	public final static String	LOGIN_URL = "/account/login";
-	public final static String	LOGOUT_URL = "/account/logout";
-	public final static String	SCAN_URL = "/account/get_files_and_image_enabled_objects/0.xml?r=";
-	public final static String	ACCOUNT_CREATION_URL = "/iframe/pos_new_account?bundle_id=com.facilescan";
-	public final static String  UPLOAD_SCAN_URL = "/upload_files.xml";
-	
-	private final static boolean mIsDevServer = false;
 
 	private static boolean mIsLoggedIn = false;
 
@@ -161,10 +149,7 @@ public class SingleApp
 	
 	public static void logOut()
 	{
-		if (CookieManager.getInstance().getCookie(SingleApp.getBaseURLForCookie()) != null) {
-			CookieManager.getInstance().setCookie(SingleApp.getBaseURLForCookie(), "");
-		}
-		CookieManager.getInstance().removeSessionCookie();
+		WebService.removeCookies();
 		SingleApp.saveAccount(null);
 		SingleApp.setSessionId("");
 		SingleApp.setLoggedIn(false);
@@ -189,23 +174,6 @@ public class SingleApp
 	public static String getAuthorizationToken()
 	{
 		return pref.account.getAuthorizationToken();
-	}
-	
-	public static String getBaseURL()
-	{
-		if (mIsDevServer)
-			return FACILE_BASEURL_DEV;
-		else
-			return FACILE_BASEURL;
-	}
-
-	public static String getBaseURLForCookie()
-	{
-//		if (mIsDevServer)
-//			return "dev.incwo.com";
-//		else
-//			return "www.incwo.com";
-		return getBaseURL();
 	}
 	
 	public static boolean isNetworkAvailable() {
@@ -283,7 +251,7 @@ public class SingleApp
 	public static void loadSessionId(){
 		getFacileScanPreference().loadSession();
 		CookieManager.getInstance().removeSessionCookie();
-		CookieManager.getInstance().setCookie(getBaseURLForCookie(), getFacileScanPreference().session);
+		CookieManager.getInstance().setCookie(WebService.getBaseURL(), getFacileScanPreference().session);
 	}
 	
 	public static String getSessionId(){

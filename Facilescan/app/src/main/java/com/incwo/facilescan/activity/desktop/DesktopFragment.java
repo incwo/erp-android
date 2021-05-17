@@ -190,7 +190,7 @@ public class DesktopFragment extends TabFragment {
                 }
 
             });
-            webView.loadUrl(SingleApp.getBaseURL() + SingleApp.ACCOUNT_CREATION_URL);
+            webView.loadUrl(WebService.getBaseURL() + WebService.ACCOUNT_CREATION_URL);
         }
     }
 
@@ -296,7 +296,7 @@ public class DesktopFragment extends TabFragment {
                     mCurrentUrl = url;
                     //				        	SingleApp.setSelectedDesktopURL(url);
 
-                    if (url.equals(SingleApp.getBaseURL() + SingleApp.LOGOUT_URL)) {
+                    if (url.equals(WebService.getBaseURL() + WebService.LOGOUT_URL)) {
                         if (logToDesktop != null && logToDesktop.getStatus() == AsyncTask.Status.RUNNING) {
                             logToDesktop.cancel(true);
                         }
@@ -324,7 +324,7 @@ public class DesktopFragment extends TabFragment {
 
         mStopImageView.setVisibility(View.VISIBLE);
         mReloadButton.setVisibility(View.GONE);
-        mWv.loadDataWithBaseURL(SingleApp.getBaseURL(), html, "text/html", "utf-8", null);
+        mWv.loadDataWithBaseURL(WebService.getBaseURL(), html, "text/html", "utf-8", null);
     }
 
 
@@ -371,7 +371,7 @@ public class DesktopFragment extends TabFragment {
                 logToDesktop.cancel(true);
             }
             mIsFirstLoad = true;
-            mWv.loadUrl(SingleApp.getBaseURL() + SingleApp.LOGOUT_URL);
+            mWv.loadUrl(WebService.getBaseURL() + WebService.LOGOUT_URL);
             mViewFlipper.setDisplayedChild(FORM);
             EditText editText = (EditText) mRoot.findViewById(R.id.edit_mail);
             editText.setText("");

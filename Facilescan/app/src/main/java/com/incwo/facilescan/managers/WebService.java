@@ -40,20 +40,42 @@ public class WebService {
     public String error;
     public List<String> cookies = null;
 
+    // URLs
+
+    private final static String  NEWS_RSS_URL = "https://blog.incwo.com/xml/rss20/feed.xml?show_extended=1";
+    private final static String  VIDEOS_RSS_URL = "http://www.incwo.com/videos/trainings.xml";
+    private final static String  FACILE_BASEURL = "https://www.incwo.com";
+    private final static String  FACILE_BASEURL_DEV = "http://dev.incwo.com";
+    private final static String	LOGIN_URL = "/account/login";
+    public final static String	LOGOUT_URL = "/account/logout";
+    private final static String	SCAN_URL = "/account/get_files_and_image_enabled_objects/0.xml?r=";
+    public final static String	ACCOUNT_CREATION_URL = "/iframe/pos_new_account?bundle_id=com.facilescan";
+    private final static String  UPLOAD_SCAN_URL = "/upload_files.xml";
+
+    private final static boolean mIsDevServer = false;
+
     // Error codes
     static public int NO_CONNECTION = -1;
     static public int BAD_IDENTIFIERS = -2;
+
+    public static String getBaseURL()
+    {
+        if (mIsDevServer)
+            return FACILE_BASEURL_DEV;
+        else
+            return FACILE_BASEURL;
+    }
 
     public void get(String url) {
         HttpGet(url, "UTF-8", SingleApp.getAccount());
     }
 
     public void getNews() {
-        HttpGet(SingleApp.NEWS_RSS_URL, "application/rss+xml", null);
+        HttpGet(NEWS_RSS_URL, "application/rss+xml", null);
     }
 
     public void getVideos() {
-        HttpGet(SingleApp.VIDEOS_RSS_URL, "application/rss+xml", null);
+        HttpGet(VIDEOS_RSS_URL, "application/rss+xml", null);
     }
 
     // Pass account = null if not authentified.
@@ -108,7 +130,7 @@ public class WebService {
             // didn't found anything smarter than that...
             if (cookies == null) {
                 Random rand = new Random();
-                String remoteUrl = SingleApp.getBaseURL() + SingleApp.LOGIN_URL + "?mobile=2&remember_me=1&email=" + URLEncoder.encode(account.getPassword(), "utf-8") + "&password=" + URLEncoder.encode(account.getPassword(), "utf-8") + "&r=" + rand.nextInt();
+                String remoteUrl = WebService.getBaseURL() + LOGIN_URL + "?mobile=2&remember_me=1&email=" + URLEncoder.encode(account.getPassword(), "utf-8") + "&password=" + URLEncoder.encode(account.getPassword(), "utf-8") + "&r=" + rand.nextInt();
                 URL tmpURL = new URL(remoteUrl);
                 HttpURLConnection tmpConnection = (HttpURLConnection) tmpURL.openConnection();
                 final String contentType = "application/x-www-form-urlencoded;charset=" + inputStreamFormat;
@@ -126,7 +148,7 @@ public class WebService {
             //
             // random avoid caching issue
             Random rand = new Random();
-            String remoteUrl = SingleApp.getBaseURL() + SingleApp.SCAN_URL + rand.nextInt() + "&hierarchical=1";
+            String remoteUrl = getBaseURL() + SCAN_URL + rand.nextInt() + "&hierarchical=1";
             URL tmpURL = new URL(remoteUrl);
             HttpURLConnection tmpConnection = (HttpURLConnection) tmpURL.openConnection();
             setupConnection(tmpConnection, "GET", "application/x-www-form-urlencoded;charset=" + inputStreamFormat, account);
@@ -158,7 +180,7 @@ public class WebService {
                     httpURLConnection.addRequestProperty("Cookie", tmp);
                     if (tmp.contains("_session_id=")) {
                         cookieManager.removeSessionCookie();
-                        cookieManager.setCookie(SingleApp.getBaseURLForCookie(), tmp);
+                        cookieManager.setCookie(WebService.getBaseURL(), tmp);
                         SingleApp.setSessionId(tmp);
                     }
                 }
@@ -174,7 +196,7 @@ public class WebService {
     }
 
     public void logToDesktop(Account account) {
-        String remoteUrl = SingleApp.getBaseURL() + SingleApp.LOGIN_URL + "?mobile=2&remember_me=1"+account.getURLParameters();
+        String remoteUrl = WebService.getBaseURL() + WebService.LOGIN_URL + "?mobile=2&remember_me=1"+account.getURLParameters();
         try {
             URL url = new URL(remoteUrl);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -222,7 +244,7 @@ public class WebService {
     public void logToScan(Account account) {
         // random avoid caching issue
         Random rand = new Random();
-        String remoteUrl = SingleApp.getBaseURL() + SingleApp.SCAN_URL + rand.nextInt() + "&hierarchical=1";
+        String remoteUrl = getBaseURL() + SCAN_URL + rand.nextInt() + "&hierarchical=1";
 
         try {
             URL url = new URL(remoteUrl);
@@ -269,9 +291,16 @@ public class WebService {
 
     }
 
+    public static void removeCookies() {
+        if (CookieManager.getInstance().getCookie(getBaseURL()) != null) {
+            CookieManager.getInstance().setCookie(getBaseURL(), "");
+        }
+        CookieManager.getInstance().removeSessionCookie();
+    }
+
     // submit scan informations
     public void uploadForm(String businessFileId, Form form, Bitmap image) {
-        String remoteUrl = SingleApp.getBaseURL() + "/" + businessFileId + SingleApp.UPLOAD_SCAN_URL;
+        String remoteUrl = getBaseURL() + "/" + businessFileId + UPLOAD_SCAN_URL;
 
         try {
             String postData = buildPOSTData(form, image);
