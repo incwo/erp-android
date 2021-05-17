@@ -110,7 +110,7 @@ public class ScanFragment extends BaseListFragment {
     }
 
     private void fetch() {
-        mBusinessFilesFetch = new BusinessFilesFetch(SingleApp.getAccount().getUsername(), SingleApp.getAccount().getPassword());
+        mBusinessFilesFetch = new BusinessFilesFetch(SingleApp.getAccount());
         viewFlipper.setDisplayedChild(LOADING_FLIPPER_INDEX);
         mBusinessFilesFetch.fetch(new BusinessFilesFetch.Listener() {
             @Override

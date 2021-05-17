@@ -5,13 +5,13 @@ import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.incwo.facilescan.helpers.Account;
 import com.incwo.facilescan.managers.WebService;
 
 import java.util.ArrayList;
 
 public class BusinessFilesFetch {
-    private String mUsername;
-    private String mPassword;
+    private Account mAccount;
     private Listener mListener = null;
     private AsyncGetTask mAsyncTask = null;
 
@@ -33,14 +33,13 @@ public class BusinessFilesFetch {
         }
     }
 
-    public BusinessFilesFetch(@NonNull String username, @NonNull String password) {
-        mUsername = username;
-        mPassword = password;
+    public BusinessFilesFetch(@NonNull Account account) {
+        mAccount = account;
     }
 
     public void fetch(@NonNull Listener listener) {
         mListener = listener;
-        mAsyncTask = new AsyncGetTask(mUsername, mPassword);
+        mAsyncTask = new AsyncGetTask(mAccount);
         mAsyncTask.execute();
     }
 
@@ -65,12 +64,10 @@ public class BusinessFilesFetch {
     }
 
     private class AsyncGetTask extends AsyncTask<Void, Integer, TaskResult> {
-        String mUsername;
-        String mPassword;
+        Account mAccount;
 
-        AsyncGetTask(@NonNull String username, @NonNull String password) {
-            mUsername = username;
-            mPassword = password;
+        AsyncGetTask(@NonNull Account account) {
+            mAccount = account;
         }
 
         protected void onPreExecute() {
@@ -78,7 +75,7 @@ public class BusinessFilesFetch {
 
         protected TaskResult doInBackground(Void... tasks) {
             WebService webService = new WebService();
-            webService.logToScan(mUsername, mPassword);
+            webService.logToScan(mAccount);
 
             TaskResult result = new TaskResult();
             if (isCancelled()) {

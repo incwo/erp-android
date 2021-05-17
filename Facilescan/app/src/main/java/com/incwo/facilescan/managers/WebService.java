@@ -287,7 +287,7 @@ public class WebService {
         }
     }
 
-    public void logToScan(String username, String password) {
+    public void logToScan(Account account) {
         // random avoid caching issue
         Random rand = new Random();
         String remoteUrl = SingleApp.getBaseURL() + SingleApp.SCAN_URL + rand.nextInt() + "&hierarchical=1";
@@ -313,8 +313,8 @@ public class WebService {
             headersFields = httpURLConnection.getHeaderFields();
 
             if (responseCode >= 200 && responseCode < 300) {
-                if (!SingleApp.getAccount().getUsername().equals(username) || !SingleApp.getAccount().getPassword().equals(password)) {
-                    SingleApp.saveAccount(new Account(username, password));
+                if (!account.equals(SingleApp.getAccount())) {
+                    SingleApp.saveAccount(account);
                 }
                 InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(), inputStreamFormat);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
