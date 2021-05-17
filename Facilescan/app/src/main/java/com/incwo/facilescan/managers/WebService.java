@@ -125,14 +125,14 @@ public class WebService {
     }
 
     // This function is very slow
-    private HttpURLConnection tryConnectToFacileAndManageCookies(HttpURLConnection httpURLConnection, URL url, String username, String password) {
+    private HttpURLConnection tryConnectToFacileAndManageCookies(HttpURLConnection httpURLConnection, URL url, Account account) {
         try {
             // If we don't have any cookies,
             // send any request in order to get cookies
             // didn't found anything smarter than that...
             if (cookies == null) {
                 Random rand = new Random();
-                String remoteUrl = SingleApp.getBaseURL() + SingleApp.LOGIN_URL + "?mobile=2&remember_me=1&email=" + URLEncoder.encode(username, "utf-8") + "&password=" + URLEncoder.encode(password, "utf-8") + "&r=" + rand.nextInt();
+                String remoteUrl = SingleApp.getBaseURL() + SingleApp.LOGIN_URL + "?mobile=2&remember_me=1&email=" + URLEncoder.encode(account.getPassword(), "utf-8") + "&password=" + URLEncoder.encode(account.getPassword(), "utf-8") + "&r=" + rand.nextInt();
                 HttpURLConnection tmpConnection = null;
                 URL tmpURL = new URL(remoteUrl);
                 tmpConnection = (HttpURLConnection) tmpURL.openConnection();
@@ -144,7 +144,7 @@ public class WebService {
                 tmpConnection.setRequestProperty("Accept-Language", "fr");
                 tmpConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
                 tmpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-                tmpConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken(username, password));
+                tmpConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken(account.getUsername(), account.getPassword()));
                 tmpConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
                 tmpConnection.setInstanceFollowRedirects(true);
                 tmpConnection.connect();
@@ -155,7 +155,7 @@ public class WebService {
 
             //
             // Test connections identifiers
-            // We try to connect, and if the identifiers are bad, an exeption will be raised
+            // We try to connect, and if the identifiers are bad, an exception will be raised
             // (very ugly)
             //
             // random avoid caching issue
@@ -173,7 +173,7 @@ public class WebService {
             tmpConnection.setRequestProperty("Accept-Language", "fr");
             tmpConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
             tmpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-            tmpConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken(username, password));
+            tmpConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken(account.getUsername(), account.getPassword()));
             tmpConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
 
             // here is the trick with the exception
@@ -189,7 +189,7 @@ public class WebService {
 
 
             // if we reach this line, password and username are good --> we can save.
-            SingleApp.saveAccount(new Account(username, password));
+            SingleApp.saveAccount(account);
 
             // open new connection (for the real request this time)
 //            httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -218,14 +218,14 @@ public class WebService {
         return httpURLConnection;
     }
 
-    public void logToDesktop(String username, String password) {
+    public void logToDesktop(Account account) {
 
         // encode
         String login = null;
         String pass = null;
         try {
-            login = URLEncoder.encode(username, "UTF-8");
-            pass = URLEncoder.encode(password, "UTF-8");
+            login = URLEncoder.encode(account.getUsername(), "UTF-8");
+            pass = URLEncoder.encode(account.getPassword(), "UTF-8");
         } catch (UnsupportedEncodingException e1) {
             e1.printStackTrace();
         }
@@ -244,10 +244,10 @@ public class WebService {
             httpURLConnection.setRequestProperty("Accept-Language", "fr");
             httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
             httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-            httpURLConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken(username, password));
+            httpURLConnection.setRequestProperty("Authorization", SingleApp.getAutorizationToken(account.getUsername(), account.getPassword()));
             httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
 
-            httpURLConnection = tryConnectToFacileAndManageCookies(httpURLConnection, url, username, password);
+            httpURLConnection = tryConnectToFacileAndManageCookies(httpURLConnection, url, account);
 
             if (httpURLConnection == null) {
                 responseCode = WebService.BAD_IDENTIFIERS;
@@ -313,7 +313,7 @@ public class WebService {
             headersFields = httpURLConnection.getHeaderFields();
 
             if (responseCode >= 200 && responseCode < 300) {
-                if (SingleApp.getAccount().getUsername().equals(username) == false || SingleApp.getAccount().getPassword().equals(password) == false) {
+                if (!SingleApp.getAccount().getUsername().equals(username) || !SingleApp.getAccount().getPassword().equals(password)) {
                     SingleApp.saveAccount(new Account(username, password));
                 }
                 InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(), inputStreamFormat);

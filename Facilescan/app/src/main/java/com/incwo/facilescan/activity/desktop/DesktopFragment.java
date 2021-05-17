@@ -19,6 +19,7 @@ import android.widget.ViewFlipper;
 
 import com.incwo.facilescan.R;
 import com.incwo.facilescan.activity.application.BaseTabActivity;
+import com.incwo.facilescan.helpers.Account;
 import com.incwo.facilescan.helpers.fragments.TabFragment;
 import com.incwo.facilescan.managers.SingleApp;
 import com.incwo.facilescan.managers.WebService;
@@ -335,11 +336,9 @@ public class DesktopFragment extends TabFragment {
         }
         if (SingleApp.isLoggedIn()) {
             mViewFlipper.setDisplayedChild(LOGGED_IN);
-            logToDesktop = new AsyncTaskLogToDesktop(SingleApp.getAccount().getUsername(), SingleApp.getAccount().getPassword()).execute();
-
+            logToDesktop = new AsyncTaskLogToDesktop(SingleApp.getAccount()).execute();
         }
     }
-
 
     public void checkLogin() {
         if (logToDesktop != null && logToDesktop.getStatus() == AsyncTask.Status.RUNNING) {
@@ -348,7 +347,7 @@ public class DesktopFragment extends TabFragment {
         if (SingleApp.isLoggedIn()) {
             mViewFlipper.setDisplayedChild(LOGGED_IN);
             if (mIsFirstLoad)
-                logToDesktop = new AsyncTaskLogToDesktop(SingleApp.getAccount().getUsername(), SingleApp.getAccount().getPassword()).execute();
+                logToDesktop = new AsyncTaskLogToDesktop(SingleApp.getAccount()).execute();
 
         } else {
             mViewFlipper.setDisplayedChild(FORM);
@@ -394,18 +393,16 @@ public class DesktopFragment extends TabFragment {
             editText = (EditText) mRoot.findViewById(R.id.edit_password);
             String password = editText.getText().toString();
 
-            logToDesktop = new AsyncTaskLogToDesktop(username, password).execute();
+            logToDesktop = new AsyncTaskLogToDesktop(new Account(username, password)).execute();
         }
     };
 
 
     private class AsyncTaskLogToDesktop extends AsyncTask<String, Integer, Long> {
-        String login;
-        String password;
+        Account mAccount;
 
-        public AsyncTaskLogToDesktop(String username, String pass) {
-            login = username;
-            password = pass;
+        public AsyncTaskLogToDesktop(Account account) {
+            mAccount = account;
         }
 
         protected void onPreExecute() {
@@ -414,7 +411,7 @@ public class DesktopFragment extends TabFragment {
         protected Long doInBackground(String... tasks) {
             long result = 0;
             mWebService = new WebService();
-            mWebService.logToDesktop(login, password);
+            mWebService.logToDesktop(mAccount);
             result = mWebService.responseCode;
 
             return result;
