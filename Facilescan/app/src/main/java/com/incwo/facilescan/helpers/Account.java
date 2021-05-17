@@ -2,6 +2,9 @@ package com.incwo.facilescan.helpers;
 
 import androidx.annotation.Nullable;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 
 public class Account {
 	public Account(String username, String password) {
@@ -29,6 +32,19 @@ public class Account {
 		} catch (Exception e) {
 			e.toString();
 			return null;
+		}
+	}
+
+	public String getURLParameters() {
+		String encUsername = null;
+		String encPassword = null;
+		try {
+			encUsername = URLEncoder.encode(mUsername, "UTF-8");
+			encPassword = URLEncoder.encode(mPassword, "UTF-8");
+			return "&email=" + encUsername + "&password=" + encPassword;
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+			return "";
 		}
 	}
 }

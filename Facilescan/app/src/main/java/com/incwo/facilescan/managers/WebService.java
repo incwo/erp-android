@@ -219,19 +219,7 @@ public class WebService {
     }
 
     public void logToDesktop(Account account) {
-
-        // encode
-        String login = null;
-        String pass = null;
-        try {
-            login = URLEncoder.encode(account.getUsername(), "UTF-8");
-            pass = URLEncoder.encode(account.getPassword(), "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            e1.printStackTrace();
-        }
-
-
-        String remoteUrl = SingleApp.getBaseURL() + SingleApp.LOGIN_URL + "?mobile=2&remember_me=1&email=" + login + "&password=" + pass;
+        String remoteUrl = SingleApp.getBaseURL() + SingleApp.LOGIN_URL + "?mobile=2&remember_me=1"+account.getURLParameters();
         HttpURLConnection httpURLConnection = null;
         try {
             URL url = new URL(remoteUrl);
