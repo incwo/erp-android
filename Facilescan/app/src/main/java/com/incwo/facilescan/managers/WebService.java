@@ -7,6 +7,8 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.incwo.facilescan.BuildConfig;
 import com.incwo.facilescan.R;
 import com.incwo.facilescan.helpers.Account;
@@ -20,7 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -31,13 +32,12 @@ import java.util.Random;
 
 public class WebService {
 
-    private final int CONNECT_TIME_OUT = 15 * 1000;
-    private final int READ_TIME_OUT = 60 * 1000;
+    final String inputStreamFormat = "UTF-8";
+
     public int responseCode;
     public Map<String, List<String>> headersFields;
     public String body;
     public String error;
-    public String inputStreamFormat = "UTF-8";
     public List<String> cookies = null;
 
     // Error codes
@@ -45,58 +45,34 @@ public class WebService {
     static public int BAD_IDENTIFIERS = -2;
 
     public void get(String url) {
-        HttpGetFR(url, "UTF-8");
+        HttpGet(url, "UTF-8", SingleApp.getAccount());
     }
 
     public void getNews() {
-        HttpGetFR(SingleApp.NEWS_RSS_URL, "application/rss+xml");
+        HttpGet(SingleApp.NEWS_RSS_URL, "application/rss+xml", null);
     }
 
     public void getVideos() {
-        HttpGetFR(SingleApp.VIDEOS_RSS_URL, "application/rss+xml");
+        HttpGet(SingleApp.VIDEOS_RSS_URL, "application/rss+xml", null);
     }
 
-    public void HttpGetFR(String remoteUrl, String contentType) {
-        HttpGetFR(remoteUrl, contentType, "GET");
-    }
-
-    public void HttpGetFR(String remoteUrl, String contentType, String requestMethod) {
-        HttpGetFR(remoteUrl, contentType, requestMethod, null);
-    }
-
-    public void HttpGetFR(String remoteUrl, String contentType, String requestMethod, String token) {
-        HttpURLConnection httpURLConnection = null;
-
+    // Pass account = null if not authentified.
+    public void HttpGet(String remoteUrl, String contentType, @Nullable Account account) {
         try {
             URL url = new URL(remoteUrl);
 
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.setDoOutput(false);
-            httpURLConnection.setUseCaches(false);
-            httpURLConnection.setConnectTimeout(CONNECT_TIME_OUT);
-            httpURLConnection.setReadTimeout(READ_TIME_OUT);
-
-            httpURLConnection.setRequestProperty("Accept-Language", "fr");
-            httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
-            httpURLConnection.setRequestProperty("Content-Type", contentType);
-            if (token != null)
-                httpURLConnection.setRequestProperty("Authorization", token);
-            else if (SingleApp.getAuthorizationToken() != null)
-                httpURLConnection.setRequestProperty("Authorization", SingleApp.getAuthorizationToken());
-            httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
-
-
-            httpURLConnection.connect();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            setupConnection(connection, "GET", contentType, account);
+            connection.connect();
 
             if (cookies == null)
-                cookies = httpURLConnection.getHeaderFields().get("Set-Cookie");
+                cookies = connection.getHeaderFields().get("Set-Cookie");
 
-            responseCode = httpURLConnection.getResponseCode();
-            headersFields = httpURLConnection.getHeaderFields();
+            responseCode = connection.getResponseCode();
+            headersFields = connection.getHeaderFields();
 
             if ((responseCode >= 200 && responseCode < 300)) {
-                InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(), inputStreamFormat);
+                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream(), inputStreamFormat);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
                 String line;
@@ -106,7 +82,7 @@ public class WebService {
                 }
                 body = stringBuffer.toString();
             } else if ((responseCode >= 400 && responseCode < 500)) {
-                InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getErrorStream());
+                InputStreamReader inputStreamReader = new InputStreamReader(connection.getErrorStream());
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
                 String line;
@@ -116,8 +92,8 @@ public class WebService {
                 stringBuffer.append(line);
                 body = stringBuffer.toString();
             } else
-                body = httpURLConnection.getResponseMessage();
-            httpURLConnection.disconnect();
+                body = connection.getResponseMessage();
+            connection.disconnect();
         } catch (Exception e) {
             manageError(e);
         }
@@ -133,20 +109,10 @@ public class WebService {
             if (cookies == null) {
                 Random rand = new Random();
                 String remoteUrl = SingleApp.getBaseURL() + SingleApp.LOGIN_URL + "?mobile=2&remember_me=1&email=" + URLEncoder.encode(account.getPassword(), "utf-8") + "&password=" + URLEncoder.encode(account.getPassword(), "utf-8") + "&r=" + rand.nextInt();
-                HttpURLConnection tmpConnection = null;
                 URL tmpURL = new URL(remoteUrl);
-                tmpConnection = (HttpURLConnection) tmpURL.openConnection();
-                tmpConnection.setRequestMethod("POST");
-                tmpConnection.setDoOutput(true);
-                tmpConnection.setConnectTimeout(CONNECT_TIME_OUT);
-                tmpConnection.setReadTimeout(READ_TIME_OUT);
-
-                tmpConnection.setRequestProperty("Accept-Language", "fr");
-                tmpConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
-                tmpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-                tmpConnection.setRequestProperty("Authorization", SingleApp.getAccount().getAuthorizationToken());
-                tmpConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
-                tmpConnection.setInstanceFollowRedirects(true);
+                HttpURLConnection tmpConnection = (HttpURLConnection) tmpURL.openConnection();
+                final String contentType = "application/x-www-form-urlencoded;charset=" + inputStreamFormat;
+                setupConnection(tmpConnection, "POST", contentType, null);
                 tmpConnection.connect();
 
                 cookies = tmpConnection.getHeaderFields().get("Set-Cookie");
@@ -161,20 +127,9 @@ public class WebService {
             // random avoid caching issue
             Random rand = new Random();
             String remoteUrl = SingleApp.getBaseURL() + SingleApp.SCAN_URL + rand.nextInt() + "&hierarchical=1";
-
             URL tmpURL = new URL(remoteUrl);
-            HttpURLConnection tmpConnection = null;
-            tmpConnection = (HttpURLConnection) tmpURL.openConnection();
-            tmpConnection.setRequestMethod("GET");
-            tmpConnection.setDoOutput(false);
-            tmpConnection.setConnectTimeout(CONNECT_TIME_OUT);
-            tmpConnection.setReadTimeout(READ_TIME_OUT);
-
-            tmpConnection.setRequestProperty("Accept-Language", "fr");
-            tmpConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
-            tmpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-            tmpConnection.setRequestProperty("Authorization", SingleApp.getAccount().getAuthorizationToken());
-            tmpConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
+            HttpURLConnection tmpConnection = (HttpURLConnection) tmpURL.openConnection();
+            setupConnection(tmpConnection, "GET", "application/x-www-form-urlencoded;charset=" + inputStreamFormat, account);
 
             // here is the trick with the exception
             // if there are no content, an exception is raised and the function return null
@@ -220,21 +175,10 @@ public class WebService {
 
     public void logToDesktop(Account account) {
         String remoteUrl = SingleApp.getBaseURL() + SingleApp.LOGIN_URL + "?mobile=2&remember_me=1"+account.getURLParameters();
-        HttpURLConnection httpURLConnection = null;
         try {
             URL url = new URL(remoteUrl);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setConnectTimeout(CONNECT_TIME_OUT);
-            httpURLConnection.setReadTimeout(READ_TIME_OUT);
-
-            httpURLConnection.setRequestProperty("Accept-Language", "fr");
-            httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
-            httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-            httpURLConnection.setRequestProperty("Authorization", SingleApp.getAccount().getAuthorizationToken());
-            httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
-
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            setupConnection(httpURLConnection, "POST", "application/x-www-form-urlencoded;charset=" + inputStreamFormat, account);
             httpURLConnection = tryConnectToFacileAndManageCookies(httpURLConnection, url, account);
 
             if (httpURLConnection == null) {
@@ -280,21 +224,10 @@ public class WebService {
         Random rand = new Random();
         String remoteUrl = SingleApp.getBaseURL() + SingleApp.SCAN_URL + rand.nextInt() + "&hierarchical=1";
 
-        HttpURLConnection httpURLConnection = null;
         try {
             URL url = new URL(remoteUrl);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.setDoOutput(false);
-            httpURLConnection.setConnectTimeout(CONNECT_TIME_OUT);
-            httpURLConnection.setReadTimeout(READ_TIME_OUT);
-
-            httpURLConnection.setRequestProperty("Accept-Language", "fr");
-            httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
-            httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + inputStreamFormat);
-            httpURLConnection.setRequestProperty("Authorization", SingleApp.getAccount().getAuthorizationToken());
-            httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
-
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            setupConnection(httpURLConnection, "GET", "application/x-www-form-urlencoded;charset=" + inputStreamFormat, account);
             httpURLConnection.connect();
 
             responseCode = httpURLConnection.getResponseCode();
@@ -335,7 +268,6 @@ public class WebService {
         }
 
     }
-
 
     // submit scan informations
     public void uploadForm(String businessFileId, Form form, Bitmap image) {
@@ -439,22 +371,30 @@ public class WebService {
         return stringBuilder.toString();
     }
 
-    private void setPOSTFormConnectionHeaders(HttpURLConnection httpURLConnection, int contentLength) throws ProtocolException {
-        httpURLConnection.addRequestProperty("Cookie", SingleApp.getSessionId());
+    private void setupConnection(HttpURLConnection connection, String method, String contentType, @Nullable Account account) throws ProtocolException {
+        final int CONNECT_TIME_OUT = 15 * 1000;
+        final int READ_TIME_OUT = 60 * 1000;
 
-        httpURLConnection.setRequestMethod("POST");
-        httpURLConnection.setDoOutput(true);
-        httpURLConnection.setConnectTimeout(CONNECT_TIME_OUT);
-        httpURLConnection.setReadTimeout(READ_TIME_OUT);
+        connection.setRequestMethod(method);
+        connection.setDoOutput(method.equals("POST")); // Needed if setRequestedMethod() is called? The doc is very unclear
+        connection.setConnectTimeout(CONNECT_TIME_OUT);
+        connection.setReadTimeout(READ_TIME_OUT);
+        connection.setInstanceFollowRedirects(true);
 
-        httpURLConnection.setRequestProperty("Accept-Language", "fr");
-        httpURLConnection.setRequestProperty("Accept-Charset", inputStreamFormat);
-        httpURLConnection.setRequestProperty("Content-Length", String.valueOf(contentLength));
-        httpURLConnection.setRequestProperty("Content-Type", "application/xml");
-        httpURLConnection.setRequestProperty("Authorization", SingleApp.getAuthorizationToken());
-        httpURLConnection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
+        connection.setRequestProperty("Accept-Language", "fr");
+        connection.setRequestProperty("Accept-Charset", inputStreamFormat);
+        connection.setRequestProperty("Content-Type", contentType);
+        if(account != null) {
+            connection.setRequestProperty("Authorization", account.getAuthorizationToken());
+        }
+        connection.setRequestProperty("X_FACILE_VERSION", BuildConfig.VERSION_NAME);
     }
 
+    private void setPOSTFormConnectionHeaders(HttpURLConnection connection, int contentLength) throws ProtocolException {
+        setupConnection(connection, "POST", "application/xml", SingleApp.getAccount());
+        connection.addRequestProperty("Cookie", SingleApp.getSessionId());
+        connection.setRequestProperty("Content-Length", String.valueOf(contentLength));
+    }
 
     ////
     // Image download functions
@@ -462,16 +402,15 @@ public class WebService {
 
     // Download an image and return a Bitmap with it original size
     public Bitmap downloadBitmap(String urldisplay) {
-        Bitmap mIcon11 = null;
         try {
             InputStream in = new java.net.URL(urldisplay).openStream();
-            mIcon11 = BitmapFactory.decodeStream(in);
+            Bitmap mIcon11 = BitmapFactory.decodeStream(in);
+            return mIcon11;
         } catch (Exception e) {
             e.printStackTrace();
             manageError(e);
             return null;
         }
-        return mIcon11;
     }
 
     // Download an image and return a resized Bitmap
