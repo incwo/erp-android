@@ -7,7 +7,17 @@
     <!-- General -->
     <string name="mail">e-mail</string>
     <string name="password">password</string>
-    
+
+    <!-- Sign in -->
+    <string name="signin.emailPlaceholder">E-mail</string>
+    <string name="signin.passwordPlaceholder">Password</string>
+    <string name="signin.loginButton">Log in</string>
+    <string name="signin.shardPlaceholder">Shard</string>
+    <string name="signin.shardInfo">Shard</string>
+    <string name="signin.shardInfo.title">Sharding?</string>
+    <string name="signin.shardInfo.message">Some clients have subscribed to a Private Shard, with its own storage and its own processing power.\n\nLeave this field empty if you have not subscribed to a Shard.</string>
+
+
     <!-- Tabs -->
     <string name="desktop_tab_title">Desktop</string>
     <string name="nav_stop_description">Stop loading</string>
@@ -26,9 +36,6 @@
     <string name="Connect">Login</string>
     <string name="NoAccountYet">No account yet?</string>
     <string name="create_account">Create an account</string>
-
-    <string name="signin.emailPlaceholder">E-mail</string>
-    <string name="signin.passwordPlaceholder">Password</string>
 
     <string name="Loading">Loading</string>
     <string name="All_videos">All Videos</string>
@@ -49,7 +56,6 @@
     <!-- Errors -->
     <string name="connexion_error">The Internet connection appears to be offline.</string>
     <string name="bad_identifiers">Wrong identifiers.</string>
-    <string name="signin.loginButton">Log in</string>
-    <string name="signin.shardPlaceholder">Shard</string>
+
 
 </resources>

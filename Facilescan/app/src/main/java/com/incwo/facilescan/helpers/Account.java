@@ -7,9 +7,10 @@ import java.net.URLEncoder;
 
 
 public class Account {
-	public Account(String username, String password) {
+	public Account(String username, String password, @Nullable String shard) {
 		mUsername = username;
 		mPassword = password;
+		mShard = shard.length() > 0 ? shard : null;
 	}
 	private Account() { }
 
@@ -21,6 +22,11 @@ public class Account {
 	private String mPassword;
 	public String getPassword() {
 		return mPassword;
+	}
+
+	private @Nullable String mShard;
+	public @Nullable String getShard() {
+		return mShard;
 	}
 
 	@Nullable

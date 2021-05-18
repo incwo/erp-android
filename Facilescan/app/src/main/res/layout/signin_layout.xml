@@ -62,20 +62,22 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp">
 
-        <TextView
+        <EditText
             android:id="@+id/edit_shard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text"
             android:hint="@string/signin.shardPlaceholder"
             android:textSize="17sp"
+            android:inputType="text"
+            android:maxLines="1"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageButton"
+            app:layout_constraintEnd_toStartOf="@+id/shardInfoButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/shardInfoButton"
             android:layout_width="60dp"
             android:layout_height="51dp"
             android:contentDescription="@string/signin.shardInfo"

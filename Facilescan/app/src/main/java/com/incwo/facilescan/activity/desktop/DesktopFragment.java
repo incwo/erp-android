@@ -1,6 +1,7 @@
 
 package com.incwo.facilescan.activity.desktop;
 
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,9 +14,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
+
+import androidx.appcompat.widget.AppCompatImageButton;
 
 import com.incwo.facilescan.R;
 import com.incwo.facilescan.activity.application.BaseTabActivity;
@@ -31,7 +35,7 @@ import java.net.URLDecoder;
 
 public class DesktopFragment extends TabFragment {
 
-    static private int CONNECT_OR_CREATE = 0;
+    static private int SIGN_IN = 0;
     static private int CREATE_ACCOUNT = 1;
     static private int FORM = 2;
     static private int LOGGED_IN = 3;
@@ -57,12 +61,15 @@ public class DesktopFragment extends TabFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.desktop_fragment, null);
         mViewFlipper = (ViewFlipper) mRoot;
-        mViewFlipper.setDisplayedChild(CONNECT_OR_CREATE);
+        mViewFlipper.setDisplayedChild(SIGN_IN);
         mWebService = new WebService();
 
-        // CONNECT_OR_CREATE
+        // SIGN_IN
         Button loginButton = (Button) mRoot.findViewById(R.id.signin_loginButton);
         loginButton.setOnClickListener(mLoginButtonListener);
+        ImageButton shardInfoButton = (ImageButton) mRoot.findViewById(R.id.shardInfoButton);
+        shardInfoButton.setOnClickListener(mShardInfoButtonListener);
+
 
         // LOGGED_IN
         mWv = (WebView) mRoot.findViewById(R.id.WEBVIEW);
@@ -102,8 +109,8 @@ public class DesktopFragment extends TabFragment {
     @Override
     public boolean onBackPressed() {
         super.onBackPressed();
-        if (SingleApp.isLoggedIn() == false && mViewFlipper.getDisplayedChild() != CONNECT_OR_CREATE){
-            mViewFlipper.setDisplayedChild(CONNECT_OR_CREATE);
+        if (!SingleApp.isLoggedIn() && mViewFlipper.getDisplayedChild() != SIGN_IN){
+            mViewFlipper.setDisplayedChild(SIGN_IN);
             return true;
         }
         return false;
@@ -389,12 +396,25 @@ public class DesktopFragment extends TabFragment {
             mRoot.findViewById(R.id.signin_loginButton).setVisibility(View.GONE);
             mRoot.findViewById(R.id.signin_bottomProgressBar).setVisibility(View.VISIBLE);
 
-            EditText editText = (EditText) mRoot.findViewById(R.id.edit_mail);
-            String username = editText.getText().toString();
-            editText = (EditText) mRoot.findViewById(R.id.edit_password);
-            String password = editText.getText().toString();
+            EditText emailEditText = (EditText) mRoot.findViewById(R.id.edit_mail);
+            EditText passwordEditText = (EditText) mRoot.findViewById(R.id.edit_password);
+            EditText shardEditText = (EditText) mRoot.findViewById(R.id.edit_shard);
 
-            logToDesktop = new AsyncTaskLogToDesktop(new Account(username, password)).execute();
+            String username = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            String shard = shardEditText.getText().toString();
+            logToDesktop = new AsyncTaskLogToDesktop(new Account(username, password, shard)).execute();
+        }
+    };
+
+    private View.OnClickListener mShardInfoButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.signin_shardInfo_title)
+                    .setMessage(R.string.signin_shardInfo_message)
+                    .setNeutralButton("OK", null)
+                    .show();
         }
     };
 

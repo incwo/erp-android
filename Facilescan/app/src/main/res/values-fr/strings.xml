@@ -5,6 +5,16 @@
     <string name="mail">e-mail</string>
     <string name="password">mot de passe</string>
 
+    <!-- Sign in -->
+    <string name="signin.emailPlaceholder">E-mail</string>
+    <string name="signin.passwordPlaceholder">Mot de passe</string>
+    <string name="signin.loginButton">Connexion</string>
+    <string name="signin.shardPlaceholder">Espace privé</string>
+    <string name="signin.shardInfo">Explique ce qu\'est un espace privé.</string>
+    <string name="signin.shardInfo.title">Espace privé ?</string>
+    <string name="signin.shardInfo.message">Certains clients disposent d\'une instance de serveur privée, avec son propre stockage et sa propre puissance de calcul.\n\nSi vous ne disposez pas d\'un tel espace, laissez le champ vide.</string>
+
+
     <!-- Tabs -->
     <string name="desktop_tab_title">Bureau</string>
     <string name="scan_tab_title">Scan</string>
@@ -34,9 +44,6 @@
     <!-- Errors -->
     <string name="connexion_error">La connexion Internet semble interrompue.</string>
     <string name="bad_identifiers">Mauvais identifiants.</string>
-    <string name="signin.emailPlaceholder">E-mail</string>
-    <string name="signin.passwordPlaceholder">Mot de passe</string>
-    <string name="signin.loginButton">Connexion</string>
     <string name="nav_stop_description">Interrompre le chargement</string>
     <string name="nav_reload_description">Recharger la page</string>
     <string name="nav_back_description">Page précédente</string>
@@ -45,7 +52,5 @@
     <string name="take_photo_description">Prendre une photo</string>
     <string name="photo_source_prompt">Source de la photo:</string>
     <string name="menu_refresh">Rafraîchir</string>
-    <string name="signin.shardPlaceholder">Espace privé</string>
-    <string name="signin.shardInfo">Explique ce qu\'est un espace privé.</string>
 
 </resources>

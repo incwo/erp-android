@@ -52,7 +52,9 @@ public class FacileScanPreference {
 				username = (new String(encryptHelper.decrypt(username))).trim();
 				String password = sharedPreferences.getString("password", "");
 				password = (new String(encryptHelper.decrypt(password))).trim();
-				account = new Account(username, password);
+				String shard = sharedPreferences.getString("shard", "");
+				shard = (new String(encryptHelper.decrypt(shard))).trim();
+				account = new Account(username, password, shard);
 			} catch (Exception e) {
 				e.toString();
 				account = null;
@@ -69,6 +71,7 @@ public class FacileScanPreference {
 			try {
 				editor.putString("username", EncryptHelper.bytesToHex(encryptHelper.encrypt(account.getUsername())));
 				editor.putString("password", EncryptHelper.bytesToHex(encryptHelper.encrypt(account.getPassword())));
+				editor.putString("shard", EncryptHelper.bytesToHex(encryptHelper.encrypt(account.getShard())));
 			} catch (Exception e) {
 				e.toString();
 			}

@@ -2,6 +2,7 @@
 package com.incwo.facilescan.activity.scan;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -15,11 +16,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.incwo.facilescan.R;
+import com.incwo.facilescan.activity.desktop.DesktopFragment;
 import com.incwo.facilescan.helpers.Account;
 import com.incwo.facilescan.helpers.fragments.BaseListFragment;
 import com.incwo.facilescan.activity.application.BaseTabActivity;
@@ -61,6 +64,8 @@ public class ScanFragment extends BaseListFragment {
         // connectionIndexView
         Button loginButton = (Button) mRoot.findViewById(R.id.signin_loginButton);
         loginButton.setOnClickListener(mLogInButtonListener);
+        ImageButton shardInfoButton = (ImageButton) mRoot.findViewById(R.id.shardInfoButton);
+        shardInfoButton.setOnClickListener(mShardInfoButtonListener);
 
         // this prevent previous fragment to catch onTouch event
         mRoot.setOnTouchListener(new View.OnTouchListener() {
@@ -232,14 +237,28 @@ public class ScanFragment extends BaseListFragment {
             mRoot.findViewById(R.id.signin_bottomProgressBar).setVisibility(View.VISIBLE);
 
             EditText usernameEditText = (EditText) mRoot.findViewById(R.id.edit_mail);
-            String username = usernameEditText.getText().toString();
             EditText passwordEditText = (EditText) mRoot.findViewById(R.id.edit_password);
-            String password = passwordEditText.getText().toString();
+            EditText shardEditText = (EditText) mRoot.findViewById(R.id.edit_shard);
 
-            SingleApp.saveAccount(new Account(username, password));
+            String username = usernameEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            String shard = shardEditText.getText().toString();
+
+            SingleApp.saveAccount(new Account(username, password, shard));
             SingleApp.setLoggedIn(true);
             firstLoad = true;
             checkLogin();
+        }
+    };
+
+    private View.OnClickListener mShardInfoButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.signin_shardInfo_title)
+                    .setMessage(R.string.signin_shardInfo_message)
+                    .setNeutralButton("OK", null)
+                    .show();
         }
     };
 }
