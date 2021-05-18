@@ -22,6 +22,7 @@ import com.incwo.facilescan.activity.application.BaseTabActivity;
 import com.incwo.facilescan.helpers.Account;
 import com.incwo.facilescan.helpers.fragments.TabFragment;
 import com.incwo.facilescan.managers.SingleApp;
+import com.incwo.facilescan.managers.URLProvider;
 import com.incwo.facilescan.managers.WebService;
 
 import java.io.UnsupportedEncodingException;
@@ -190,7 +191,7 @@ public class DesktopFragment extends TabFragment {
                 }
 
             });
-            webView.loadUrl(WebService.getBaseURL() + WebService.ACCOUNT_CREATION_URL);
+            webView.loadUrl(URLProvider.getAccountCreationUrl());
         }
     }
 
@@ -296,7 +297,7 @@ public class DesktopFragment extends TabFragment {
                     mCurrentUrl = url;
                     //				        	SingleApp.setSelectedDesktopURL(url);
 
-                    if (url.equals(WebService.getBaseURL() + WebService.LOGOUT_URL)) {
+                    if (url.equals(URLProvider.getLogoutUrl())) {
                         if (logToDesktop != null && logToDesktop.getStatus() == AsyncTask.Status.RUNNING) {
                             logToDesktop.cancel(true);
                         }
@@ -324,7 +325,7 @@ public class DesktopFragment extends TabFragment {
 
         mStopImageView.setVisibility(View.VISIBLE);
         mReloadButton.setVisibility(View.GONE);
-        mWv.loadDataWithBaseURL(WebService.getBaseURL(), html, "text/html", "utf-8", null);
+        mWv.loadDataWithBaseURL(URLProvider.getBaseURL(), html, "text/html", "utf-8", null);
     }
 
 
@@ -371,7 +372,7 @@ public class DesktopFragment extends TabFragment {
                 logToDesktop.cancel(true);
             }
             mIsFirstLoad = true;
-            mWv.loadUrl(WebService.getBaseURL() + WebService.LOGOUT_URL);
+            mWv.loadUrl(URLProvider.getLogoutUrl());
             mViewFlipper.setDisplayedChild(FORM);
             EditText editText = (EditText) mRoot.findViewById(R.id.edit_mail);
             editText.setText("");

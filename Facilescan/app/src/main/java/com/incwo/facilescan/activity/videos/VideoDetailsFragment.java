@@ -11,6 +11,7 @@ import android.webkit.WebView;
 import com.incwo.facilescan.R;
 import com.incwo.facilescan.helpers.fragments.TabFragment;
 import com.incwo.facilescan.managers.SingleApp;
+import com.incwo.facilescan.managers.URLProvider;
 import com.incwo.facilescan.managers.WebService;
 
 public class VideoDetailsFragment extends TabFragment {
@@ -37,8 +38,6 @@ public class VideoDetailsFragment extends TabFragment {
 	    	super.onResume();
 	    	
 	    	mWebView = (WebView)mRoot.findViewById(R.id.WEBVIEW);
-	    	String url = WebService.getBaseURL() + "/iframe/training/" + SingleApp.getSelectedVideo();
-
             mWebView.clearView();
             mWebView.scrollTo(0, 0);
             mWebView.getSettings().setAllowFileAccess(true);
@@ -49,7 +48,8 @@ public class VideoDetailsFragment extends TabFragment {
             mWebView.setBackgroundColor(0xffffffff);
             mWebView.setWebChromeClient(new WebChromeClient());
             mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-            mWebView.loadUrl(url);
+
+            mWebView.loadUrl(URLProvider.getVideoUrl(SingleApp.getSelectedVideo()));
 	    }
 	 
 

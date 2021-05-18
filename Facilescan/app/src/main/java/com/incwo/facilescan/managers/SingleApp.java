@@ -250,8 +250,7 @@ public class SingleApp
 	
 	public static void loadSessionId(){
 		getFacileScanPreference().loadSession();
-		CookieManager.getInstance().removeSessionCookie();
-		CookieManager.getInstance().setCookie(WebService.getBaseURL(), getFacileScanPreference().session);
+		WebService.setSessionCookie(getFacileScanPreference().session);
 	}
 	
 	public static String getSessionId(){

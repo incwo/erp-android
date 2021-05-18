@@ -34,18 +34,5 @@ public class Account {
 			return null;
 		}
 	}
-
-	public String getURLParameters() {
-		String encUsername = null;
-		String encPassword = null;
-		try {
-			encUsername = URLEncoder.encode(mUsername, "UTF-8");
-			encPassword = URLEncoder.encode(mPassword, "UTF-8");
-			return "&email=" + encUsername + "&password=" + encPassword;
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-			return "";
-		}
-	}
 }
 

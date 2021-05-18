@@ -25,7 +25,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -40,42 +39,23 @@ public class WebService {
     public String error;
     public List<String> cookies = null;
 
-    // URLs
-
-    private final static String  NEWS_RSS_URL = "https://blog.incwo.com/xml/rss20/feed.xml?show_extended=1";
-    private final static String  VIDEOS_RSS_URL = "http://www.incwo.com/videos/trainings.xml";
-    private final static String  FACILE_BASEURL = "https://www.incwo.com";
-    private final static String  FACILE_BASEURL_DEV = "http://dev.incwo.com";
-    private final static String	LOGIN_URL = "/account/login";
-    public final static String	LOGOUT_URL = "/account/logout";
-    private final static String	SCAN_URL = "/account/get_files_and_image_enabled_objects/0.xml?r=";
-    public final static String	ACCOUNT_CREATION_URL = "/iframe/pos_new_account?bundle_id=com.facilescan";
-    private final static String  UPLOAD_SCAN_URL = "/upload_files.xml";
-
-    private final static boolean mIsDevServer = false;
 
     // Error codes
     static public int NO_CONNECTION = -1;
     static public int BAD_IDENTIFIERS = -2;
 
-    public static String getBaseURL()
-    {
-        if (mIsDevServer)
-            return FACILE_BASEURL_DEV;
-        else
-            return FACILE_BASEURL;
-    }
+
 
     public void get(String url) {
         HttpGet(url, "UTF-8", SingleApp.getAccount());
     }
 
     public void getNews() {
-        HttpGet(NEWS_RSS_URL, "application/rss+xml", null);
+        HttpGet(URLProvider.NEWS_RSS_URL, "application/rss+xml", null);
     }
 
     public void getVideos() {
-        HttpGet(VIDEOS_RSS_URL, "application/rss+xml", null);
+        HttpGet(URLProvider.VIDEOS_RSS_URL, "application/rss+xml", null);
     }
 
     // Pass account = null if not authentified.
@@ -129,9 +109,7 @@ public class WebService {
             // send any request in order to get cookies
             // didn't found anything smarter than that...
             if (cookies == null) {
-                Random rand = new Random();
-                String remoteUrl = WebService.getBaseURL() + LOGIN_URL + "?mobile=2&remember_me=1&email=" + URLEncoder.encode(account.getPassword(), "utf-8") + "&password=" + URLEncoder.encode(account.getPassword(), "utf-8") + "&r=" + rand.nextInt();
-                URL tmpURL = new URL(remoteUrl);
+                URL tmpURL = new URL(URLProvider.getLoginUrl(account));
                 HttpURLConnection tmpConnection = (HttpURLConnection) tmpURL.openConnection();
                 final String contentType = "application/x-www-form-urlencoded;charset=" + inputStreamFormat;
                 setupConnection(tmpConnection, "POST", contentType, null);
@@ -146,10 +124,7 @@ public class WebService {
             // We try to connect, and if the identifiers are bad, an exception will be raised
             // (very ugly)
             //
-            // random avoid caching issue
-            Random rand = new Random();
-            String remoteUrl = getBaseURL() + SCAN_URL + rand.nextInt() + "&hierarchical=1";
-            URL tmpURL = new URL(remoteUrl);
+            URL tmpURL = new URL(URLProvider.getScanUrl());
             HttpURLConnection tmpConnection = (HttpURLConnection) tmpURL.openConnection();
             setupConnection(tmpConnection, "GET", "application/x-www-form-urlencoded;charset=" + inputStreamFormat, account);
 
@@ -180,7 +155,7 @@ public class WebService {
                     httpURLConnection.addRequestProperty("Cookie", tmp);
                     if (tmp.contains("_session_id=")) {
                         cookieManager.removeSessionCookie();
-                        cookieManager.setCookie(WebService.getBaseURL(), tmp);
+                        cookieManager.setCookie(URLProvider.getBaseURL(), tmp);
                         SingleApp.setSessionId(tmp);
                     }
                 }
@@ -196,9 +171,8 @@ public class WebService {
     }
 
     public void logToDesktop(Account account) {
-        String remoteUrl = WebService.getBaseURL() + WebService.LOGIN_URL + "?mobile=2&remember_me=1"+account.getURLParameters();
         try {
-            URL url = new URL(remoteUrl);
+            URL url = new URL(URLProvider.getLoginUrl(account));
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             setupConnection(httpURLConnection, "POST", "application/x-www-form-urlencoded;charset=" + inputStreamFormat, account);
             httpURLConnection = tryConnectToFacileAndManageCookies(httpURLConnection, url, account);
@@ -242,12 +216,8 @@ public class WebService {
     }
 
     public void logToScan(Account account) {
-        // random avoid caching issue
-        Random rand = new Random();
-        String remoteUrl = getBaseURL() + SCAN_URL + rand.nextInt() + "&hierarchical=1";
-
         try {
-            URL url = new URL(remoteUrl);
+            URL url = new URL(URLProvider.getScanUrl());
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             setupConnection(httpURLConnection, "GET", "application/x-www-form-urlencoded;charset=" + inputStreamFormat, account);
             httpURLConnection.connect();
@@ -291,20 +261,24 @@ public class WebService {
 
     }
 
+    public static void setSessionCookie(String session) {
+        CookieManager.getInstance().removeSessionCookie();
+        CookieManager.getInstance().setCookie(URLProvider.getBaseURL(), session);
+    }
+
     public static void removeCookies() {
-        if (CookieManager.getInstance().getCookie(getBaseURL()) != null) {
-            CookieManager.getInstance().setCookie(getBaseURL(), "");
+        if (CookieManager.getInstance().getCookie(URLProvider.getBaseURL()) != null) {
+            CookieManager.getInstance().setCookie(URLProvider.getBaseURL(), "");
         }
         CookieManager.getInstance().removeSessionCookie();
     }
 
     // submit scan informations
     public void uploadForm(String businessFileId, Form form, Bitmap image) {
-        String remoteUrl = getBaseURL() + "/" + businessFileId + UPLOAD_SCAN_URL;
 
         try {
             String postData = buildPOSTData(form, image);
-            URL url = new URL(remoteUrl);
+            URL url = new URL(URLProvider.getUploadScanUrl(businessFileId));
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             setPOSTFormConnectionHeaders(httpURLConnection, postData.length());
             httpURLConnection.connect();
