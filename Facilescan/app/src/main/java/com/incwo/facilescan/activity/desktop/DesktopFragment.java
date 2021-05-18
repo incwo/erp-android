@@ -305,7 +305,7 @@ public class DesktopFragment extends TabFragment {
                     mCurrentUrl = url;
                     //				        	SingleApp.setSelectedDesktopURL(url);
 
-                    if (url.equals(URLProvider.getLogoutUrl())) {
+                    if (url.equals(URLProvider.getLogoutUrl(SingleApp.getAccount()))) {
                         if (logToDesktop != null && logToDesktop.getStatus() == AsyncTask.Status.RUNNING) {
                             logToDesktop.cancel(true);
                         }
@@ -387,7 +387,7 @@ public class DesktopFragment extends TabFragment {
                 logToDesktop.cancel(true);
             }
             mIsFirstLoad = true;
-            mWv.loadUrl(URLProvider.getLogoutUrl());
+            mWv.loadUrl(URLProvider.getLogoutUrl(SingleApp.getAccount()));
             mViewFlipper.setDisplayedChild(FORM);
             EditText editText = (EditText) mRoot.findViewById(R.id.edit_mail);
             editText.setText("");

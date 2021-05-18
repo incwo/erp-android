@@ -42,11 +42,11 @@ public class URLProvider {
     public static String getLoginUrl(Account account) {
         // Pass a random number in the URL to prevent caching.
         Random rand = new Random();
-        return getUnauthBaseUrl() + LOGIN_URL + "?mobile=2&remember_me=1"+ getAccountURLParameters(account)+ "&r=" + rand.nextInt();
+        return getBaseUrl(account) + LOGIN_URL + "?mobile=2&remember_me=1"+ getAccountURLParameters(account)+ "&r=" + rand.nextInt();
     }
 
-    public static String getLogoutUrl() {
-        return getUnauthBaseUrl() + LOGOUT_URL;
+    public static String getLogoutUrl(Account account) {
+        return getBaseUrl(account) + LOGOUT_URL;
     }
 
     public static String getScanUrl(Account account) {
