@@ -124,7 +124,7 @@ public class WebService {
             // We try to connect, and if the identifiers are bad, an exception will be raised
             // (very ugly)
             //
-            URL tmpURL = new URL(URLProvider.getScanUrl());
+            URL tmpURL = new URL(URLProvider.getScanUrl(account));
             HttpURLConnection tmpConnection = (HttpURLConnection) tmpURL.openConnection();
             setupConnection(tmpConnection, "GET", "application/x-www-form-urlencoded;charset=" + inputStreamFormat, account);
 
@@ -155,7 +155,7 @@ public class WebService {
                     httpURLConnection.addRequestProperty("Cookie", tmp);
                     if (tmp.contains("_session_id=")) {
                         cookieManager.removeSessionCookie();
-                        cookieManager.setCookie(URLProvider.getBaseURL(), tmp);
+                        cookieManager.setCookie(URLProvider.getUnauthBaseUrl(), tmp);
                         SingleApp.setSessionId(tmp);
                     }
                 }
@@ -217,7 +217,7 @@ public class WebService {
 
     public void logToScan(Account account) {
         try {
-            URL url = new URL(URLProvider.getScanUrl());
+            URL url = new URL(URLProvider.getScanUrl(account));
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             setupConnection(httpURLConnection, "GET", "application/x-www-form-urlencoded;charset=" + inputStreamFormat, account);
             httpURLConnection.connect();
@@ -263,22 +263,22 @@ public class WebService {
 
     public static void setSessionCookie(String session) {
         CookieManager.getInstance().removeSessionCookie();
-        CookieManager.getInstance().setCookie(URLProvider.getBaseURL(), session);
+        CookieManager.getInstance().setCookie(URLProvider.getUnauthBaseUrl(), session);
     }
 
     public static void removeCookies() {
-        if (CookieManager.getInstance().getCookie(URLProvider.getBaseURL()) != null) {
-            CookieManager.getInstance().setCookie(URLProvider.getBaseURL(), "");
+        if (CookieManager.getInstance().getCookie(URLProvider.getUnauthBaseUrl()) != null) {
+            CookieManager.getInstance().setCookie(URLProvider.getUnauthBaseUrl(), "");
         }
         CookieManager.getInstance().removeSessionCookie();
     }
 
     // submit scan informations
-    public void uploadForm(String businessFileId, Form form, Bitmap image) {
+    public void uploadForm(String businessFileId, Form form, Bitmap image, Account account) {
 
         try {
             String postData = buildPOSTData(form, image);
-            URL url = new URL(URLProvider.getUploadScanUrl(businessFileId));
+            URL url = new URL(URLProvider.getUploadScanUrl(businessFileId, account));
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             setPOSTFormConnectionHeaders(httpURLConnection, postData.length());
             httpURLConnection.connect();

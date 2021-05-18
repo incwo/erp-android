@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 
 import com.incwo.facilescan.R;
@@ -208,7 +209,7 @@ public class DesktopFragment extends TabFragment {
             mStopImageView.setVisibility(View.VISIBLE);
             mReloadButton.setVisibility(View.GONE);
             if (mCurrentUrl == null)
-                loadHtml(formatHtml());
+                loadHtml(formatHtml(), SingleApp.getAccount());
             else
                 mWv.loadUrl("javascript:window.location.reload( true )");
         }
@@ -234,7 +235,7 @@ public class DesktopFragment extends TabFragment {
                 if (webBackForwardList.getCurrentIndex() == 1 || mCurrentUrl == null) // if no previous page
                 {
                     mWv.goBack();
-                    loadHtml(formatHtml());
+                    loadHtml(formatHtml(), SingleApp.getAccount());
                 } else
                     mWv.goBack();
             }
@@ -257,7 +258,7 @@ public class DesktopFragment extends TabFragment {
         return mWebService.body;
     }
 
-    private void loadHtml(String html) {
+    private void loadHtml(String html, @Nullable Account account) {
         // Init WebView
 
         mWv.scrollTo(0, 0);
@@ -332,7 +333,14 @@ public class DesktopFragment extends TabFragment {
 
         mStopImageView.setVisibility(View.VISIBLE);
         mReloadButton.setVisibility(View.GONE);
-        mWv.loadDataWithBaseURL(URLProvider.getBaseURL(), html, "text/html", "utf-8", null);
+
+        String baseUrl;
+        if(account == null) {
+            baseUrl = URLProvider.getUnauthBaseUrl();
+        } else {
+            baseUrl = URLProvider.getBaseUrl(account);
+        }
+        mWv.loadDataWithBaseURL(baseUrl, html, "text/html", "utf-8", null);
     }
 
 
@@ -450,7 +458,7 @@ public class DesktopFragment extends TabFragment {
                 BaseTabActivity activity = getTabActivity();
                 if(activity != null) {
                     activity.logIn();
-                    loadHtml(formatHtml());
+                    loadHtml(formatHtml(), SingleApp.getAccount());
                 }
             } else {
                 WebService.showError(result);
@@ -490,7 +498,7 @@ public class DesktopFragment extends TabFragment {
         protected void onPostExecute(Long result) {
 
             if (result >= 200 && result < 300) {
-                loadHtml(formatHtml());
+                loadHtml(formatHtml(), SingleApp.getAccount());
             } else {
                 WebService.showError(result);
                 SingleApp.setLoggedIn(false);

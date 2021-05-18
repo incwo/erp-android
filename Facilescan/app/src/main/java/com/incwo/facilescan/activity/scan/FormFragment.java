@@ -389,9 +389,9 @@ public class FormFragment extends TabFragment {
             WebService ws = new WebService();
 
             if (mIsPhotoTaken)
-                ws.uploadForm(mBusinessFileId, mForm, mBitmap);
+                ws.uploadForm(mBusinessFileId, mForm, mBitmap, SingleApp.getAccount());
             else
-                ws.uploadForm(mBusinessFileId, mForm, null);
+                ws.uploadForm(mBusinessFileId, mForm, null, SingleApp.getAccount());
 
             return (long) ws.responseCode;
         }
