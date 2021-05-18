@@ -50,5 +50,6 @@
     <string name="connexion_error">The Internet connection appears to be offline.</string>
     <string name="bad_identifiers">Wrong identifiers.</string>
     <string name="signin.loginButton">Log in</string>
+    <string name="signin.shardPlaceholder">Shard</string>
 
 </resources>

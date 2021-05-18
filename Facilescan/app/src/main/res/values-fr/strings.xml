@@ -45,5 +45,7 @@
     <string name="take_photo_description">Prendre une photo</string>
     <string name="photo_source_prompt">Source de la photo:</string>
     <string name="menu_refresh">Rafraîchir</string>
+    <string name="signin.shardPlaceholder">Espace privé</string>
+    <string name="signin.shardInfo">Explique ce qu\'est un espace privé.</string>
 
 </resources>
