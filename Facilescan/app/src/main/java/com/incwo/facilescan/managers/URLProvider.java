@@ -6,19 +6,19 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Random;
 
+/** Central point to provide and build URLs. */
 public class URLProvider {
     public final static String  NEWS_RSS_URL = "https://blog.incwo.com/xml/rss20/feed.xml?show_extended=1";
     public final static String  VIDEOS_RSS_URL = "http://www.incwo.com/videos/trainings.xml";
-    private final static String  FACILE_BASEURL = "https://www.incwo.com";
-    private final static String  FACILE_BASEURL_DEV = "http://dev.incwo.com";
+    private final static String FACILE_BASEURL = "https://www.incwo.com";
+    private final static String FACILE_BASEURL_DEV = "http://dev.incwo.com";
     private final static String	LOGIN_URL = "/account/login";
-    public final static String	LOGOUT_URL = "/account/logout";
+    private final static String	LOGOUT_URL = "/account/logout";
     private final static String	SCAN_URL = "/account/get_files_and_image_enabled_objects/0.xml?r=";
-    public final static String	ACCOUNT_CREATION_URL = "/iframe/pos_new_account?bundle_id=com.facilescan";
-    private final static String  UPLOAD_SCAN_URL = "/upload_files.xml";
+    private final static String	ACCOUNT_CREATION_URL = "/iframe/pos_new_account?bundle_id=com.facilescan";
+    private final static String UPLOAD_SCAN_URL = "/upload_files.xml";
 
     private final static boolean mIsDevServer = false;
-
 
     public static String getBaseURL()
     {
@@ -33,6 +33,7 @@ public class URLProvider {
     }
 
     public static String getLoginUrl(Account account) {
+        // Pass a random number in the URL to prevent caching.
         Random rand = new Random();
         return getBaseURL() + LOGIN_URL + "?mobile=2&remember_me=1"+ getAccountURLParameters(account)+ "&r=" + rand.nextInt();
     }
@@ -42,7 +43,7 @@ public class URLProvider {
     }
 
     public static String getScanUrl() {
-        // random avoid caching issue
+        // Pass a random number in the URL to prevent caching.
         Random rand = new Random();
         return getBaseURL() + SCAN_URL + rand.nextInt() + "&hierarchical=1";
     }
